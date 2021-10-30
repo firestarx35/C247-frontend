@@ -3,7 +3,7 @@ import { links } from '../asset'
 const bookingdat = {
     namespaced: true,
     state() {
-        return { Airports: [], isairportAvialable: false, topform: null, cargodetails: [], cargosummary: [] }
+        return { Airports: [], isairportAvialable: false, topform: null, cargodetails: [], cargosummary: [], checkout: null }
     },
 
     mutations: {
@@ -34,6 +34,10 @@ const bookingdat = {
             const summary = { TotalQuantity: payload.quantity, TotalVolume: volume.toFixed(2), TotalWeight: weight, Density: density, dimension: state.cargodetails[0].dimension};
             state.cargosummary.push(summary);
         },
+        addChechoutData(state, payload) {
+            state.checkout = {};
+            state.checkout = payload
+        }
     
     },
 
@@ -61,6 +65,9 @@ const bookingdat = {
             context.commit('addmidformData', payload);
             context.commit('makeSummary', payload);
         },
+        addCheckoutData(context, payload) {
+            context.commit('addCheckoutData', payload)
+        }
     },
 
     getters: {
@@ -83,6 +90,9 @@ const bookingdat = {
         },
         getTopform(state) {
             return state.topform
+        },
+        getCheckoutdata(state) {
+            return state.checkout
         }
     }
 };

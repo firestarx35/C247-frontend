@@ -46,7 +46,7 @@
 
             <div>
                 <button class="btn-3" @click="addtoWallet">Save for later</button>
-                <button class="btn-3" v-if="displayAddcargo">Book Now</button>
+                <button class="btn-3" v-if="displayAddcargo" @click="CheckoutData">Book Now</button>
             </div>
         </div>
     </div>
@@ -55,12 +55,15 @@
 <script>
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router'
 import { imgs } from '../../asset'
 
 export default {
     props: ['ticket'],
     setup(props) {
         const store = useStore();
+        const router = useRouter();
+
         const aeroplane_logo = imgs('AEROPLANE-LOGO.png')
 
         const displayAddcargo = ref(false);
@@ -123,109 +126,12 @@ export default {
              }
             }
         }
+        function CheckoutData() {
+            store.dispatch('bookingdat/addCheckoutData', props.ticket[2]);
+            router.push('/checkout')
+        }
 
-        return { aeroplane_logo, addCargodetails, detailedData, displayAddcargo, charges, addtoWallet }
+        return { aeroplane_logo, addCargodetails, detailedData, displayAddcargo, charges, addtoWallet, CheckoutData }
     },
 }
 </script>
-
-<style scoped>
-
-
-.card-expansion-container h1,
-.card-expansion-container h2,
-.card-expansion-container h3,
-.card-expansion-container h4,
-.card-expansion-container h5,
-.card-expansion-container h6 {
-    font-weight: 400;
-}
-
-.card-expansion-container {
-    padding: 1rem;
-    border-radius: 2rem;
-    display: flex;
-    flex-direction: column;
-    background-color: rgba(255, 255, 255, 0.863);
-    backdrop-filter: blur(6px);
-    margin: auto;
-    min-width: 600px;
-}
-
-.airline-breakdown {
-    display: flex;
-    flex-direction: row;
-    position: relative;
-    margin: auto;
-}
-
-.source-destination {
-    display: flex;
-    padding: 0 1rem 1rem 1rem;
-    width: 500px;
-}
-
-.source-text {
-    text-align: end;
-    padding-right: 1rem;
-    border-right: solid 2px grey;
-}
-
-.plane-number-logo {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    padding: 1rem;
-}
-
-.plane-number-logo img {
-    width: 110px
-}
-
-.dest-text {
-    text-align: start;
-    padding-left: 1rem;
-    border-left: solid 2px grey;
-}
-
-.cost-breakdown {
-    display: flex;
-    flex-direction: column;
-}
-
-.rate-duration-total {
-    border-top: #bfc0c0 solid 2px;
-    padding: 0.7rem;
-    /* background-color: #ffcc001e;
-    border-radius: 2rem; */
-}
-
-.cost-breakdown div {
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.costs { 
-    /* border-top: rgba(0, 0, 0, 0.1) 2px dotted;
-    border-bottom: rgba(0, 0, 0, 0.1) 2px dotted; */
-    padding: .7rem;
-    background-color: #345dff1a;
-    border-radius: 2rem;
-}
-.cost-breakdown div:last-child {
-    margin-top: 1rem;
-}
-
-.btn-3 {
-    background: #ffcc00;
-    height: 2.5rem;
-    font-size: 1.2rem;
-    border: none;
-    cursor: pointer;
-    width: 200px;
-    font-size: 1rem;
-    border-radius: 5rem;
-}
-
-</style>

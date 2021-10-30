@@ -7,7 +7,7 @@
                 <router-link to="/transactions">Bookings</router-link>
                 <router-link to="/wallet"> Wallet</router-link>
                 <router-link to="/requests">Requests</router-link>
-                <a @click="isProfile = !isProfile"><span class="profile-tag">{{user}}</span></a>
+                <a @click="displayProfile"><span class="profile-tag">{{user}}</span></a>
                 <ul class="dropdown-profile" v-if="isProfile">
                     <li><h3>My Profile</h3></li>
                     <li><h3>Sign Out</h3></li>
@@ -17,7 +17,7 @@
     </nav>
 </template>
 <script>
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { links, imgs } from '../asset'
 
@@ -27,14 +27,15 @@ export default {
         const CARGO247_Dark_BG_Logo = imgs('CARGO247_Dark_BG_Logo.svg')
         const home_link = links('home')
 
-        const isProfile = true;
+        const isProfile = ref(true);
 
         const user = computed(function() { if (store.getters['userdat/getProfileStatus']) { return store.getters['userdat/getName'] } 
                                             else { return 'Hi'} })
 
         const isAuth = computed(function() { return store.getters['userdat/getAuthStatus'] })
+        function displayProfile() { isProfile.value = !isProfile.value ; console.log(isProfile.value)}
       
-      return { CARGO247_Dark_BG_Logo, home_link, isProfile, isAuth, user }
+      return { CARGO247_Dark_BG_Logo, home_link, isProfile, isAuth, user, displayProfile }
     },
 }
 </script>
