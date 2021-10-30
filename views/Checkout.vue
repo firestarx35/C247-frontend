@@ -6,20 +6,17 @@
 
 <script>
 import "animate.css"
-import BookingPage from '../components/booking/BookingPage.vue'
-import BookingConfirmation from '../components/booking/BookingConfirmation.vue'
+import BookingPage from '../components/booking/BookingPage.vue';
+// import BookingConfirmation from '../components/booking/BookingConfirmation.vue'
 
 export default {
     components: {
         BookingPage,
-        BookingConfirmation,
+        // BookingConfirmation,
     },
 
     setup() {
         const currentComponent = 'BookingPage'
-
-
-
 
         return { currentComponent }
     }

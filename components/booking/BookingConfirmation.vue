@@ -172,10 +172,5 @@ export default {
 
         return { save_icon, printer_icon, AEROPLANE_LOGO, Airline_logo }
     }
-
 }
 </script>
-
-<style>
-
-</style>
