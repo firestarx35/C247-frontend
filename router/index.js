@@ -17,9 +17,11 @@ const isAuthenticated = computed(function() { return store.getters['userdat/getA
 
 const routes = [
   { path: '/', name: 'Login', component: Login },
-  { path: '/search', name: 'Search', component: Search, children: [ { path: '/flights', component: Flights }, 
-                                                                    { path: '/checkout', component: Checkout }
-                                                                  ] },
+  { path: '/search', name: 'Search', component: Search, children: [ 
+                                                                    { path: '', name: 'Flights', component: Flights }, 
+                                                                    { path: 'checkout', name: 'Checkout', component: Checkout }
+                                                                  ] 
+                                                                },
   { path: '/transactions', name: 'Transactions', component: Transactions },
  // { path: '/about', name: 'About', /* which is lazy-loaded when the route is visited.*/component: () => import(/* webpackChunkName: "about" */ '../views/About.vue') },*/
   { path: '/profile', name: 'Profile', component: Profile },

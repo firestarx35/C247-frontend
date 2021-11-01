@@ -128,7 +128,7 @@ export default {
         }
         function CheckoutData() {
             store.dispatch('bookingdat/addCheckoutData', props.ticket[2]);
-            router.push('/checkout')
+            router.push('/search/checkout')
         }
 
         return { aeroplane_logo, addCargodetails, detailedData, displayAddcargo, charges, addtoWallet, CheckoutData }
