@@ -5,6 +5,7 @@ import { computed } from 'vue'
 import Login from '../views/Login.vue'
 import Logout from '../views/Logout.vue'
 import Search from '../views/Search.vue'
+import Flights from '../views/Flights.vue'
 import Checkout from '../views/Checkout.vue'
 import Transactions from '../views/Transactions.vue'
 import Profile from '../views/Profile.vue'
@@ -16,8 +17,9 @@ const isAuthenticated = computed(function() { return store.getters['userdat/getA
 
 const routes = [
   { path: '/', name: 'Login', component: Login },
-  { path: '/search', name: 'Search', component: Search },
-  { path: '/checkout', name: 'Checkout', component: Checkout },  
+  { path: '/search', name: 'Search', component: Search, children: [ { path: '/flights', component: Flights }, 
+                                                                    { path: '/checkout', component: Checkout }
+                                                                  ] },
   { path: '/transactions', name: 'Transactions', component: Transactions },
  // { path: '/about', name: 'About', /* which is lazy-loaded when the route is visited.*/component: () => import(/* webpackChunkName: "about" */ '../views/About.vue') },*/
   { path: '/profile', name: 'Profile', component: Profile },

@@ -26,7 +26,7 @@ export default {
 </script>
 
 <style>
-
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&display=swap');
 /* 
 .slide-fade-enter-active {
   transition: all 0.4s ease-out;
