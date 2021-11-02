@@ -87,7 +87,7 @@
             </div>
             </div>
 
-        <div class="cost-section" v-if="booking_status">
+        <div class="cost-section" v-if="!booking_status">
             <h1>Booking Details</h1>
 
             <form class="booking-form" action="">
@@ -114,7 +114,7 @@
                 <h5><a href="#">Load Information</a></h5>
             </div>
 
-            <button class="btn-2 btn">Book Now</button>
+            <button class="btn-2 btn" @click="bookNow">Book Now</button>
 
         </div>
 
@@ -165,6 +165,7 @@ import { computed, ref } from 'vue';
 
 import { imgs } from '../../asset'
 import { useStore } from 'vuex';
+import func from 'vue-editor-bridge';
 
 export default {
    
@@ -175,7 +176,7 @@ export default {
        const save_icon = imgs('save_16.png')
        const printer_icon = imgs('printer_11.png')
 
-       const booking_status = ref('true')
+       const booking_status = ref(false)
 
        const booking_data = computed(function() { return { from: 'DEL',
                                                            from_airport: 'Indira Gandhi International Airport',
@@ -189,9 +190,10 @@ export default {
                                                            arrival_time: '10:20 AM',
                                                         }
                                                 })
+        function bookNow() { booking_status.value = true }
 
 
-    return { AEROPLANE_LOGO, Airline_logo, save_icon, printer_icon, booking_status, booking_data }
+    return { AEROPLANE_LOGO, Airline_logo, save_icon, printer_icon, booking_status, bookNow, booking_data }
     }
 
 }

@@ -26,7 +26,7 @@
                     <div class="column-2">
                         <p>Current Rate: INR {{Data.rate}}</p>
                         <p>Chargable Weight: 100kg</p>
-                        <button class="btn">Book Now</button>
+                        <button class="btn" @click="CheckoutData">Book Now</button>
                     </div>
                 </div>
             </div>
@@ -35,12 +35,17 @@
 
 <script>
 import { computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import { imgs } from '../../asset'
 
 export default {
     emits: ['remove-wallet'],
     props: ['savedTicket'],
     setup(props) {
+        const store = useStore();
+        const router = useRouter();
+
         const dots = imgs('Dots.svg')
 
          const airline = computed(function() {
@@ -73,8 +78,13 @@ export default {
             const datetime = newDate.getDate() + ' '+ month.toUpperCase() + ' ' +  dayName.toUpperCase() + ' | '+ newDate.toLocaleTimeString([], { hour: '2-digit', minute:'2-digit'})
             return  datetime 
         }
+        function CheckoutData() {
+            
+            store.dispatch('bookingdat/addCheckoutData', props.savedTicket[2]);
+            router.push('/search/checkout')
+        }
         
-        return { dots, props, Data, airline }
+        return { dots, props, Data, airline, CheckoutData }
     },
 }
 </script>

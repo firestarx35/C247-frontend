@@ -34,8 +34,8 @@ const bookingdat = {
             const summary = { TotalQuantity: payload.quantity, TotalVolume: volume.toFixed(2), TotalWeight: weight, Density: density, dimension: state.cargodetails[0].dimension};
             state.cargosummary.push(summary);
         },
-        addChechoutData(state, payload) {
-            state.checkout = {};
+        addCheckoutData(state, payload) {
+            state.checkout = null;
             state.checkout = payload
         }
     
