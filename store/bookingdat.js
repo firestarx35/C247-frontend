@@ -5,19 +5,13 @@ import router from '../router/index'
 const bookingdat = {
     namespaced: true,
     state() {
-        return { Airports: [], isairportAvialable: false, topform: null, cargodetails: [], cargosummary: [], checkout: null }
+        return { Airports: [], isairportAvialable: false, topform: null, cargodetails: [], cargosummary: [], checkout: null, checkoutData: null }
     },
 
     mutations: {
-        async fetchAirports(state) {
-            await fetch(links('airports')) 
-            .then((response)=> {
-                if (response.ok) { return response.json();} 
-                else { console.log('fetch failed'); }
-            }).then((dat)=> {
-                    state.Airports = dat; 
-                    state.isairportAvialable = true;
-                    }); 
+        fetchAirports(state, payload) {
+            state.Airports = payload; 
+            state.isairportAvialable = true;
         },
         addtopForm(state, payload) { 
             state.topform = {from: payload.from, to: payload.to, date: payload.date };
@@ -36,16 +30,26 @@ const bookingdat = {
             const summary = { TotalQuantity: payload.quantity, TotalVolume: volume.toFixed(2), TotalWeight: weight, Density: density, dimension: state.cargodetails[0].dimension};
             state.cargosummary.push(summary);
         },
-        addCheckoutData(state, payload) {
+        addCheckout(state, payload) {
             state.checkout = null;
-            state.checkout = payload
+            state.checkoutData = null;
+            state.checkout = payload;
+        },
+        addCheckoutData(state, payload) {
+            state.checkoutData = null;
+            state.checkoutData = payload
         }
-    
     },
 
     actions: {
-        fetchAirports(context) {
-            context.commit('fetchAirports');
+        async fetchAirports(context) {
+            await fetch(links('airports')).then((response)=> {
+                if (response.ok) { return response.json() }
+                else if (response.status >= 400) { router.replace('/'); context.commit('userdat/unauthenticateUser', null, { root: true });}
+                else { console.log("fetch failed") } 
+            }).then((dat)=> {
+                context.commit('fetchAirports', dat)
+            }); 
         },
         addtopform(context, payload) {
             if (context.state.topform) {
@@ -67,9 +71,22 @@ const bookingdat = {
             context.commit('addmidformData', payload);
             context.commit('makeSummary', payload);
         },
-        addCheckoutData(context, payload) {
-            context.commit('addCheckoutData', payload)
-        }
+        async addCheckout(context, payload) {
+            context.commit('addCheckout', payload)
+            const ticketData = context.rootState.ticketsdat.ticketsbytime.find(element => element[2] == payload)
+            if (ticketData != undefined && ticketData != '') {
+                context.commit('addCheckoutData', ticketData)
+            }
+            else {
+                await fetch(links('flight') + new URLSearchParams({id: context.state.checkout}), { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + context.rootState.userdat.token }}).then((response)=> {
+                    if (response.ok) { return response.json() }
+                    else if (response.status >= 400) { router.replace('/'); context.commit('userdat/unauthenticateUser', null, { root: true });}
+                    else { console.log("fetch failed") } 
+                    }).then((dat)=> {
+                        context.commit('addCheckoutData', dat)
+                    });
+                }      
+         },
     },
 
     getters: {
@@ -94,12 +111,9 @@ const bookingdat = {
             return state.topform
         },
         getCheckoutData(state) {
-            return state.checkout
-        }
-            
+            return state.checkoutData
+        }      
     },
-    
-    
 };
 
 export default bookingdat;

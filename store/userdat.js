@@ -32,26 +32,20 @@ const userdat = {
         addSpecialTickets(state, payload) {
             state.Userdata.specialTickets.push(payload) ///this payload is ticket id Flight id
         },
-        async fetchTransactions(state) {
-            fetchData(links('get_transactions'), state.token)
-            .then((data) => { 
-                state.Transactions = []
-                state.Transactions = data
-                state.TransactionAvailable = true })  
+        fetchTransactions(state, payload) {
+            state.Transactions = []
+            state.Transactions = payload
+            state.TransactionAvailable = true   
         },
-        async fetchWallet(state) {
-            fetchData(links('get_wallet'), state.token)
-            .then((data) => { 
-                state.WalletTickets = []
-                state.WalletTickets = data
-                state.WalletfetchStatus = true;  })  
+        fetchWallet(state, payload) {
+            state.WalletTickets = []
+            state.WalletTickets = payload
+            state.WalletfetchStatus = true
         },
-        async fetchProfile(state) {
-            fetchData(links('get_profile'), state.token)
-            .then((data) => {
-                state.ProfileData = []
-                state.ProfileData = data;
-                state.isprofileAvailable = true; })  
+        fetchProfile(state) {
+            state.ProfileData = []
+            state.ProfileData = data
+            state.isprofileAvailable = true 
         },
         async updateWallet(state, payload) {
             state.WalletfetchStatus = false
@@ -95,12 +89,25 @@ const userdat = {
         fetchProfile(context) {
             context.commit('fetchProfile');        ///Put this in onMounted for profile component
         },
-        fetchWallet(context) {
-            context.commit('fetchWallet')
+        async fetchWallet(context) {
+            fetchData(links('get_wallet'), context.state.token)
+            .then((data) => {
+                context.commit('fetchWallet', data)
+            })
         },
-        fetchTransactions(context) {
-            context.commit('fetchTransactions')
+        async fetchTransactions(context) {
+            fetchData(links('get_transactions'), context.state.token)
+            .then((data) => {
+                context.commit('fetchTransactions', data)
+            })
         },
+        async fetchProfile(context) {
+            fetchData(links('get_profile'), context.state.token)
+            .then((data) => {
+                context.commit('fetchProfile', data)
+            })
+        },
+
         updateWallet(context, payload) {
             if (payload[1] == true ) {
                 let midform = context.rootState.bookingdat.cargodetails
@@ -160,7 +167,7 @@ const userdat = {
 async function fetchData(url, token) {
     const response = await fetch(url, { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + token }})
                         if (response.ok) { return response.json() }
-                        else if (response.status >= 400) { router.replace('/') }//redirect to login}
+                        else if (response.status >= 400) { router.replace('/'); userdat.actions.unauthenticateUser()}//redirect to login}
                         else { console.log("fetch failed")} 
 }
 

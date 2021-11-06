@@ -16,7 +16,7 @@
                     </div>
                     <div class="icons">
                         <img :src="AEROPLANE_LOGO" alt="Aeroplane">
-                        <img :src="booking_data.airline.logo">
+                        <img :src="booking_data.logo">
                     </div>
                     <div class="dest-info">
                         <h1>TO {{booking_data.destination_name}}</h1>
@@ -164,7 +164,7 @@
 import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 
-import { imgs, links } from '../../asset'
+import { imgs } from '../../asset'
 import { detailedData } from '../../ticketData'
 
 export default {
@@ -177,24 +177,7 @@ export default {
        const printer_icon = imgs('printer_11.png')
        const booking_status = ref(false)
        
-       const raw_data = computed(function() {
-           const ticket_no = store.getters['bookingdat/getCheckoutData'];
-           const ticketData = store.getters['ticketsdat/getTickets'].find(element => element[2] == ticket_no)
-           if (ticketData != undefined && ticketData != '') {
-               return ticketData
-               }
-            else {
-                fetch(links('flight') + new URLSearchParams({id: ticket_no}), { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + store.getters['userdat/getToken']}})
-                .then((response) => {
-                    if (response.ok) { return response.json() }
-                    else if (response.status >= 400) { router.replace('/') }
-                    else { console.log("fetch failed") }
-                })
-                .then((data)=> {
-                    return data
-                })
-            }      
-        })
+    
                 // const response = await fetch(links('flight') + new URLSearchParams({id: ticket_no}), { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + store.getters['userdat/getToken']}})
                 // let data = null
                 // if (response.ok) { data = await response.json() }
@@ -202,7 +185,7 @@ export default {
                 // else { console.log("fetch failed") }
                 // const dat = await data
                 // return dat
-       const booking_data = computed(function() { return detailedData(raw_data) })
+       const booking_data = computed(function() { return detailedData(store.getters['bookingdat/getCheckoutData']) })
       
         function bookNow() { console.log(raw_data.value)}
 

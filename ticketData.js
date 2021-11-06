@@ -12,13 +12,13 @@ function airlineData(airline_id) {
     else if (airline_id == 8) { return { name: 'Turkish Airways', logo: imgs('turkish-airlines-logo.png')} }
 }
 
-function customDate(dates) {
-    const newDate = new Date(dates)
+function customDate(date) {
+    const newDate = new Date(date)
     const month = newDate.toLocaleString('default', { month: 'long' });
     const dayName = newDate.toString().split(' ')[0];
-    return datetime = { date: newDate.getDate() + ' '+ month.toUpperCase() + ' ' +  dayName.toUpperCase(),
-                       time: newDate.toLocaleTimeString([], { hour: '2-digit', minute:'2-digit'})
-                    }
+    return  { date: newDate.getDate() + ' '+ month.toUpperCase() + ' ' +  dayName.toUpperCase(),
+            time: newDate.toLocaleTimeString([], { hour: '2-digit', minute:'2-digit'})
+            }
 }
 
 function charges(ticket) {
