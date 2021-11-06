@@ -31,7 +31,7 @@
             <div class="rate-duration-total">
                 <h3>Rate: &#8377; {{charges.rate}}/kg</h3>
                 <h3>Duration: {{charges.duration}} Hrs</h3>
-                <h3>Total: <span v-if="displayAddcargo">&#8377; </span>{{charges.Total}}</h3><button class="btn-3" v-if="!displayAddcargo" @click="addCargodetails"> Add Cargo Details</button>
+                <h3>Total: <span v-if="displayAddcargo">&#8377; </span>{{charges.Total}}</h3><button class="btn-3" v-if="!displayAddcargo" @click="$emit('edit-form')"> Add Cargo Details</button>
             </div>
 
             <div class="costs" v-if="displayAddcargo">
@@ -59,6 +59,7 @@ import { useRouter } from 'vue-router'
 import { imgs } from '../../asset'
 
 export default {
+    emits: ['edit-form'],
     props: ['ticket'],
     setup(props) {
         const store = useStore();
@@ -109,18 +110,12 @@ export default {
             return datetime
         }
 
-        function addCargodetails() {
-            console.log("Click to add details")
-        }
-
         function addtoWallet() {
             const existing_tickets = store.getters['userdat/getWallet']
             if (store.getters['userdat/getWalletStatus']) {
                 if (existing_tickets != undefined && existing_tickets.some(function(element) { return element[2] == props.ticket[2] })) {
                 //Alert("Ticket already added to wallet", warning)
-                console.log("Ticket already exists", "Code is in SingleExpansion.vue")
             } else { 
-                console.log("add ticket to wallet", "code exists in SingleExpansion.vue");
                 store.dispatch('userdat/updateWallet', [props.ticket[2], true])
                 //Alert("Ticket added to wallet", "Success")
              }
@@ -131,7 +126,7 @@ export default {
             router.push('/search/checkout')
         }
 
-        return { aeroplane_logo, addCargodetails, detailedData, displayAddcargo, charges, addtoWallet, CheckoutData }
+        return { aeroplane_logo, detailedData, displayAddcargo, charges, addtoWallet, CheckoutData }
     },
 }
 </script>

@@ -42,31 +42,23 @@ const userdat = {
             state.WalletTickets = payload
             state.WalletfetchStatus = true
         },
-        fetchProfile(state) {
+        fetchProfile(state, payload) {
             state.ProfileData = []
-            state.ProfileData = data
+            state.ProfileData = payload
             state.isprofileAvailable = true 
         },
-        async updateWallet(state, payload) {
-            state.WalletfetchStatus = false
-            postData(links('update_wallet'), { data: payload }, state.token)
-            .then((data) => { 
-                state.WalletTickets = []
-                state.WalletTickets = data
-                state.WalletfetchStatus = true; });
+        updateWallet(state, payload) {
+            state.WalletTickets = []
+            state.WalletTickets = payload
+            state.WalletfetchStatus = true; 
         },
-        async updateProfile(state, payload) {
-            postData(links('update_profile'), { data: payload }, state.token)
-            .then((data) => {
-                state.ProfileData = []
-                state.ProfileData = data
-                state.isprofileAvailable = true })
+        updateProfile(state, payload) {
+            state.ProfileData = []
+            state.ProfileData = payload
+            state.isprofileAvailable = true 
         },
-        async postUserData(state) {
-            postData(links('user_data'), { data: state.Userdata }, state.token)
-            .then((response) => { 
-                console.log(response);  ///Take decision to how to handndle it
-                state.DataSent = true; })
+        postUserData(state) {
+            state.DataSent = true; 
         },
     },
 
@@ -85,9 +77,6 @@ const userdat = {
         addSpecialTickets(context, payload) {
             context.commit('addSpecialTickets', payload)
         },
-        fetchProfile(context) {
-            context.commit('fetchProfile');        ///Put this in onMounted for profile component
-        },
         async fetchWallet(context) {
             fetchData(links('get_wallet'), context.state.token)
             .then((data) => {
@@ -102,11 +91,10 @@ const userdat = {
         },
         async fetchProfile(context) {
             fetchData(links('get_profile'), context.state.token)
-            .then((data) => {
-                context.commit('fetchProfile', data)
+            .then((dat) => {
+                context.commit('fetchProfile', dat)
             })
         },
-
         async updateWallet(context, payload) {
             if (payload[1] == true ) {
                 let midform = context.rootState.bookingdat.cargodetails
@@ -116,31 +104,35 @@ const userdat = {
                     context.state.WalletfetchStatus = false
                     postData(links('update_wallet'), { data: data }, context.state.token)
                     .then((dat) => { 
-                    context.commit('updateWallet', dat)
+                        context.commit('updateWallet', dat)
                     })
                 } else { 
-                    const data = [payload[0], null]
-                    postData(links('update_wallet'), { data: data }, context.state.token)
+                    postData(links('update_wallet'), { data: [payload[0], null] }, context.state.token)
                     .then((dat) => { 
-                    context.commit('updateWallet', dat)
+                        context.commit('updateWallet', dat)
                     })
                 }
             } else {
                 postData(links('update_wallet'), { data: [payload[0]] }, context.state.token)
-                    .then((dat) => { 
+                .then((dat) => { 
                     context.commit('updateWallet', dat)
-                    })
-                context.commit('updateWallet', [payload[0]])
+                })
             }
-            
-            
         },
-        updateProfile(context, payload) {
-            context.commit('updateProfile', payload)
+        async updateProfile(context, payload) {
+            postData(links('update_profile'), { data: payload }, context.state.token)
+            .then((dat) => {
+                context.commit('updateProfile', dat)
+            })
         },
-       
-
-    }, 
+        async postUserData(context) {
+            postData(links('user_data'), { data: context.state.Userdata }, context.state.token)
+            .then((response) => { 
+                console.log(response);      ///Take decision to how to handndle it
+                context.commit('postUserData')
+              })
+        },
+    },
 
     getters: {
         getToken(state) {
@@ -173,11 +165,12 @@ const userdat = {
 
     },
 }
+
    
 async function fetchData(url, token) {
     const response = await fetch(url, { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + token }})
                         if (response.ok) { return response.json() }
-                        else if (response.status >= 400) { router.replace('/'); userdat.actions.unauthenticateUser()}//redirect to login}
+                        else if (response.status >= 400) { router.replace('/'); userdat.actions.unauthenticateUser() }
                         else { console.log("fetch failed")} 
 }
 
@@ -185,7 +178,7 @@ async function postData(url = '', data = {}, token) {
     const response = await fetch(url, { method: 'POST', mode: 'cors',headers: {'Content-Type': 'application/json', Authorization: "Bearer" + " " + token },
                                         body: JSON.stringify(data)} );
                     if (response.ok) { return response.json() }
-                    else if (response.status >= 400) { router.replace('/');  }//redirect to login}
+                    else if (response.status >= 400) { router.replace('/'); userdat.actions.unauthenticateUser() }
                     else { console.log("fetch failed")}
 }
 

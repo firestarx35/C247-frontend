@@ -8,7 +8,7 @@
             <div class="filter-box best" v-bind:class="{bestActiveClass: bestFilter}" @click="changeFilter('best')">Best</div>
             <div class="filter-box greenest" v-bind:class="{greenestActiveClass: greenestFilter}" @click="changeFilter('greenest')">Greenest</div>
         </div>
-        <single-airline v-for="airline in Airlines" :key="airline" :tickets="airline" > </single-airline>
+        <single-airline v-for="airline in Airlines" :key="airline" :tickets="airline" @edit-form="$emit('edit-form')"> </single-airline>
 </section>
 </template>
 
@@ -22,6 +22,7 @@ export default {
     components: {
         SingleAirline,
     },
+    emits: ['edit-form'],
 
     setup() {
         const store = useStore();

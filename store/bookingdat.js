@@ -55,12 +55,12 @@ const bookingdat = {
             if (context.state.topform) {
                 if ( (context.state.topform.from != payload.from) ||  (context.state.topform.to != payload.to) || (context.state.topform.date != payload.date) ) {
                     context.commit('addtopForm', payload);
-                    context.commit('ticketsdat/fetchTickets', payload, { root: true });
+                    context.dispatch('ticketsdat/fetchTickets', payload, { root: true });
                     context.commit('userdat/addRoutes', payload, { root: true });
                 }
             } else {
                 context.commit('addtopForm', payload);
-                context.commit('ticketsdat/fetchTickets', payload, { root: true });
+                context.dispatch('ticketsdat/fetchTickets', payload, { root: true });
                 context.commit('userdat/addRoutes', payload, { root: true });  // send this top form data to userdat.js interestedtickets
             }
            

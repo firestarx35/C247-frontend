@@ -9,21 +9,21 @@
        
         <div class="card-nav-wrapper">
             <div class="slide-block">
-                <div class="btn-block" @click="scrollLeft" >                        
-                    <img :src="leftscroll" alt="left scroll"  v-show="scrollsAvailable"> <!---->
+                <div class="btn-block" @click="scrollLeft" v-bind:style="disablescrollStyle">                        
+                    <img :src="leftscroll" alt="left scroll" v-bind:style="disablescrollStyle"> <!---->
                 </div>
                 <div class="card-scroll" ref="scrollBlock">
             
                     <single-ticket v-for="(aticket, index) in props.tickets" :key="aticket[2]" :ticket="aticket" @ticket-expand="activateExpansion(index)"> </single-ticket>
                    
                 </div>
-                    <div class="btn-block" @click="scrollRight" >                    <!-- :class="active" -->
-                        <img :src="rightscroll" alt="right scroll" v-show="scrollsAvailable"> <!--  -->
+                    <div class="btn-block" @click="scrollRight" v-bind:style="disablescrollStyle">                    <!-- :class="active" -->
+                        <img :src="rightscroll" alt="right scroll" v-bind:style="disablescrollStyle"> <!--  -->
                     </div>
                 
                 </div>
                 <div class="expansion-wrapper" v-if="isExpanded" >
-                    <single-expansion :ticket="detailedData"></single-expansion>
+                    <single-expansion :ticket="detailedData" @edit-form="$emit('edit-form')"></single-expansion>
                 </div>
             
             </div>
@@ -43,6 +43,7 @@ export default {
         SingleTicket,
         SingleExpansion,
     },
+    emits: ['edit-form'],
     props: ['tickets'],
 
     setup(props) {
@@ -52,6 +53,10 @@ export default {
         const leftscroll = imgs('scrollarrowleft.svg')
         const rightscroll = imgs('scrollarrowright.svg')
         const scrollBlock = ref('')
+        
+        const disablescrollStyle = computed(function() {
+            if (scrollBlock.value.scrollWidth == scrollBlock.value.clientWidth) { return { cursor: 'default', opacity: 0 }; } 
+        })
         
         const airline = computed(function() {
             if (props.tickets[0][0] == 1) { return ['Spice jet', imgs('spice-jet-logo.png')]}
@@ -66,25 +71,20 @@ export default {
         const detailedData = computed(function() {
             return props.tickets[ExpandedCardindex.value];
         } )
-        const scrollsAvailable = computed( function() { if (scrollBlock.value.scrollWidth > scrollBlock.value.clientWidth) { return true }
-                                                        else { return false }
-                                                        })
 
         function scrollLeft() {
             scrollBlock.value.scrollLeft = scrollBlock.value.scrollLeft - 200
         }
         
         function scrollRight() {
-            // console.log(scrollBlock.value.offsetWidth, scrollBlock.value.offsetLeft, scrollBlock.value.scrollLeft, scrollBlock.value.scrollWidth)
            scrollBlock.value.scrollLeft = scrollBlock.value.scrollLeft + 200
         }
         function activateExpansion(i) {
-            console.log("Trigerred expansion", i, detailedData)
             isExpanded.value = true;
             ExpandedCardindex.value = i;
         }
         
-        return { leftscroll, rightscroll, isExpanded,scrollBlock, scrollRight, scrollLeft, activateExpansion, props, airline, detailedData, scrollsAvailable}
+        return { leftscroll, rightscroll, isExpanded, scrollBlock, scrollRight, scrollLeft, activateExpansion, props, airline, detailedData, disablescrollStyle}
     },
 } 
 </script>

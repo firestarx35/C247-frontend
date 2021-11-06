@@ -25,7 +25,7 @@ const ticketsdat = {
             context.state.ticketsbycost = [];
             await fetch(links('flights') + new URLSearchParams({from: payload.from, to: payload.to, date: payload.date }), { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + context.rootState.userdat.token }}).then((response)=> {
                 if (response.ok) { return response.json() }
-                else if (response.status >= 400) { router.replace('/'); context.commit('userdat/unauthenticateUser', null, { root: true }) }//redirect to login}
+                else if (response.status >= 400) { router.replace('/'); context.commit('userdat/unauthenticateUser', null, { root: true }) }
                 else { console.log("fetch failed")}     
                 }).then((dat)=> {
                     context.state.earliest = dat[0][2]         

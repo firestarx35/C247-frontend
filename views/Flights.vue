@@ -5,7 +5,7 @@
       <search-form @get-tickets="getTickets" v-if="!areticketAvailable"></search-form>
       <summary-box v-else @edit-form="editForm"></summary-box>
   </keep-alive>
-      <multiple-airlines v-if="areticketAvailable"></multiple-airlines>
+      <multiple-airlines v-if="areticketAvailable" @edit-form="editForm"></multiple-airlines>
 </section>
     
 </template>

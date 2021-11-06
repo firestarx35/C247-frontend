@@ -8,7 +8,7 @@
                 
                 <h4>From</h4>
                 <div class="searchable">
-                <input type="text" placeholder="Source" v-model.trim="source" @input="onChange('source')" @keyup.down="arrowDown" @keyup.up="arrowUp" @keyup.enter.prevent="onEnter('source')" @blur="fetchTickets">
+                <input type="text" placeholder="Source" v-model.trim="source" @input="onChange('source')" @keyup.down="arrowDown" @keyup.up="arrowUp" @keyup.enter.prevent="onEnter('source')">
                     <ul class="dropdown-search" v-show="sourceOpen">
                         <li :class="{ 'active-list': i === arrowCounter }" v-for="(result, i) in results.slice(0,9)" :key="i" @click="setResult(i, 'source'); console.log('Trigerred click 1')" ><h3>{{result.airportCode}},   {{ result.airportName}},   {{result.cityName}}</h3></li>
                     </ul>
@@ -21,7 +21,7 @@
                 
                 <h4>To</h4>                        
                 <div class="searchable">
-                <input type="text" placeholder="Destination" v-model.trim="destination" @input="onChange('destination')" @keyup.down="arrowDown" @keyup.up="arrowUp" @keyup.enter.prevent="onEnter('destination')" @blur="fetchTickets">
+                <input type="text" placeholder="Destination" v-model.trim="destination" @input="onChange('destination')" @keyup.down="arrowDown" @keyup.up="arrowUp" @keyup.enter.prevent="onEnter('destination')">
                     <ul class="dropdown-search" v-show="destinationOpen">
                         <li :class="{ 'active-list': i === arrowCounter }" v-for="(result, i) in results.slice(0,9)" :key="i" @click="setResult(i,'destination')" ><h3>{{result.airportCode}},   {{ result.airportName}},   {{result.cityName}}</h3></li>
                     </ul>
@@ -34,7 +34,7 @@
                 
                 <h4>Date</h4>                        
                 <div class="searchable">
-                    <input type="date" placeholder="dd/mm/yyyy"  ref="dates"  @blur="fetchTickets">
+                    <input type="date" placeholder="dd/mm/yyyy"  ref="dates">
                 </div>
 
             </div>

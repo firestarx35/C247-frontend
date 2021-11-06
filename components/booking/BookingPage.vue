@@ -6,23 +6,23 @@
 
                 <div class="flight-grid">
                     <div class="source-info">
-                        <h1>FROM {{booking_data.source_name}} </h1>
-                        <h3>Departure date: {{booking_data.source_date}}</h3>
+                        <h1>{{booking_data.source_name}} </h1>
+                        <h3>{{booking_data.source_date.date}}</h3>
                         <div>
-                            <h4>Latest acceptance time: {{booking_data.source_date}} </h4>
+                            <h4>Latest acceptance time: {{booking_data.source_date.time}} </h4>
                             <h5>From address: {{booking_data.source_airport_address }}</h5>
                             <h5>From airport: {{booking_data.source_airport_name}}</h5>
                         </div>
                     </div>
                     <div class="icons">
                         <img :src="AEROPLANE_LOGO" alt="Aeroplane">
-                        <img :src="booking_data.logo">
+                        <img :src="booking_data.airline.logo">
                     </div>
                     <div class="dest-info">
-                        <h1>TO {{booking_data.destination_name}}</h1>
-                        <h3>Arrival date: {{booking_data.destination_date}}</h3>
+                        <h1>{{booking_data.destination_name}}</h1>
+                        <h3>{{booking_data.destination_date.date}}</h3>
                         <div>
-                            <h4>Arrival time: {{booking_data.destination_date}}</h4>
+                            <h4>Arrival time: {{booking_data.destination_date.time}}</h4>
                             <h5>To address: {{booking_data.destination_airport_address}} </h5>
                             <h5>To airport: {{booking_data.destination_airport_name}} </h5>
                         </div>
@@ -101,11 +101,11 @@
             </div>
             <div class="cost-grid" id="additional-cost">
                 <div><h4>Additional Cost</h4></div>
-                <div><h4>${{booking_data.amount.fuel_surcharge}}</h4></div>
+                <div><h4>{{booking_data.amount.fuel_surcharge}}</h4></div>
             </div>
             <div class="cost-grid" id="total-cost">
-                <div><h1>Total</h1></div>
-                <div><h1>${{booking_data.amount.Total}}</h1></div>
+                <div><h1>Total: </h1></div>
+                <div><h1>{{booking_data.amount.Total}}</h1></div>
             </div>
 
             <div class="terms-box">
@@ -127,16 +127,16 @@
         </form>
 
         <div class="cost-grid" id="air-fright-cost">
-            <div><h4>Air Fright Cost</h4></div>
-            <div><h4>${{booking_data.amount.airline_cost}}</h4></div>
+            <div><h4>Air Freight Cost</h4></div>
+            <div><h4>{{booking_data.amount.airline_cost}}</h4></div>
         </div>
         <div class="cost-grid" id="additional-cost">
             <div><h4>Additional Cost</h4></div>
-            <div><h4>${{booking_data.amount.fuel_surcharge}}</h4></div>
+            <div><h4>{{booking_data.amount.fuel_surcharge}}</h4></div>
         </div>
         <div class="cost-grid" id="total-cost">
-            <div><h1>Total</h1></div>
-            <div><h1>${{booking_data.amount.Total}}</h1></div>
+            <div><h1>Total: </h1></div>
+            <div><h1>{{booking_data.amount.Total}}</h1></div>
         </div>
 
         <div class="terms-box">
@@ -177,17 +177,9 @@ export default {
        const printer_icon = imgs('printer_11.png')
        const booking_status = ref(false)
        
-    
-                // const response = await fetch(links('flight') + new URLSearchParams({id: ticket_no}), { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + store.getters['userdat/getToken']}})
-                // let data = null
-                // if (response.ok) { data = await response.json() }
-                // else if (response.status >= 400) { router.replace('/') }
-                // else { console.log("fetch failed") }
-                // const dat = await data
-                // return dat
        const booking_data = computed(function() { return detailedData(store.getters['bookingdat/getCheckoutData']) })
       
-        function bookNow() { console.log(raw_data.value)}
+        function bookNow() { booking_status.value = true;}
 
     return { AEROPLANE_LOGO, Airline_logo, save_icon, printer_icon, booking_status, bookNow, booking_data }
     }

@@ -42,8 +42,8 @@ export default {
             router.push('/profile')
         }
         function logOut() {
-            store.dispatch('userdat/unauthenticateUser')
             router.replace('/logout')
+            store.dispatch('userdat/unauthenticateUser')
         }
       
       return { CARGO247_Dark_BG_Logo, home_link, isProfile, isAuth, user, displayProfile, showProfile, logOut  }
