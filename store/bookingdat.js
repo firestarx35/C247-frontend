@@ -1,4 +1,6 @@
 import { links } from '../asset'
+import router from '../router/index'
+
 
 const bookingdat = {
     namespaced: true,
@@ -8,7 +10,7 @@ const bookingdat = {
 
     mutations: {
         async fetchAirports(state) {
-            await fetch(links('airports')) //'https://c247feedbacktrial-ver1.herokuapp.com/api/Airports'
+            await fetch(links('airports')) 
             .then((response)=> {
                 if (response.ok) { return response.json();} 
                 else { console.log('fetch failed'); }
@@ -55,7 +57,7 @@ const bookingdat = {
             } else {
                 context.commit('addtopForm', payload);
                 context.commit('ticketsdat/fetchTickets', payload, { root: true });
-                context.commit('userdat/addRoutes', payload, { root: true });  // send this top form data to dynamicdat.js interestedtickets
+                context.commit('userdat/addRoutes', payload, { root: true });  // send this top form data to userdat.js interestedtickets
             }
            
         },
@@ -91,10 +93,13 @@ const bookingdat = {
         getTopform(state) {
             return state.topform
         },
-        getCheckoutdata(state) {
+        getCheckoutData(state) {
             return state.checkout
         }
-    }
+            
+    },
+    
+    
 };
 
 export default bookingdat;

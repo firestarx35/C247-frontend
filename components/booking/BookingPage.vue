@@ -6,25 +6,25 @@
 
                 <div class="flight-grid">
                     <div class="source-info">
-                        <h1>{{booking_data.from}} </h1>
-                        <h3>{{booking_data.dep_date}}</h3>
+                        <h1>FROM {{booking_data.source_name}} </h1>
+                        <h3>Departure date: {{booking_data.source_date}}</h3>
                         <div>
-                            <h4>Latest acceptance time:  {{booking_data.acceptance_time}}</h4>
-                            <h5>{{booking_data.from_address}}</h5>
-                            <h5>{{booking_data.from_airport}}</h5>
+                            <h4>Latest acceptance time: {{booking_data.source_date}} </h4>
+                            <h5>From address: {{booking_data.source_airport_address }}</h5>
+                            <h5>From airport: {{booking_data.source_airport_name}}</h5>
                         </div>
                     </div>
                     <div class="icons">
                         <img :src="AEROPLANE_LOGO" alt="Aeroplane">
-                        <img :src="Airline_logo">
+                        <img :src="booking_data.airline.logo">
                     </div>
                     <div class="dest-info">
-                        <h1>{{booking_data.to}}</h1>
-                        <h3>{{booking_data.arr_date}}</h3>
+                        <h1>TO {{booking_data.destination_name}}</h1>
+                        <h3>Arrival date: {{booking_data.destination_date}}</h3>
                         <div>
-                            <h4>Arrival time:  {{booking_data.arrival_time}}</h4>
-                            <h5>{{booking_data.to_address}}</h5>
-                            <h5>{{booking_data.to_airport}}</h5>
+                            <h4>Arrival time: {{booking_data.destination_date}}</h4>
+                            <h5>To address: {{booking_data.destination_airport_address}} </h5>
+                            <h5>To airport: {{booking_data.destination_airport_name}} </h5>
                         </div>
                     </div>
                 </div>
@@ -97,15 +97,15 @@
 
             <div class="cost-grid" id="air-fright-cost">
                 <div><h4>Air Freight Cost</h4></div>
-                <div><h4>$120</h4></div>
+                <div><h4>${{booking_data.amount.airline_cost}}</h4></div>
             </div>
             <div class="cost-grid" id="additional-cost">
                 <div><h4>Additional Cost</h4></div>
-                <div><h4>$120</h4></div>
+                <div><h4>${{booking_data.amount.fuel_surcharge}}</h4></div>
             </div>
             <div class="cost-grid" id="total-cost">
                 <div><h1>Total</h1></div>
-                <div><h1>$120</h1></div>
+                <div><h1>${{booking_data.amount.Total}}</h1></div>
             </div>
 
             <div class="terms-box">
@@ -128,15 +128,15 @@
 
         <div class="cost-grid" id="air-fright-cost">
             <div><h4>Air Fright Cost</h4></div>
-            <div><h4>$120</h4></div>
+            <div><h4>${{booking_data.amount.airline_cost}}</h4></div>
         </div>
         <div class="cost-grid" id="additional-cost">
             <div><h4>Additional Cost</h4></div>
-            <div><h4>$120</h4></div>
+            <div><h4>${{booking_data.amount.fuel_surcharge}}</h4></div>
         </div>
         <div class="cost-grid" id="total-cost">
             <div><h1>Total</h1></div>
-            <div><h1>$120</h1></div>
+            <div><h1>${{booking_data.amount.Total}}</h1></div>
         </div>
 
         <div class="terms-box">
@@ -162,10 +162,10 @@
 
 <script>
 import { computed, ref } from 'vue';
-
-import { imgs } from '../../asset'
 import { useStore } from 'vuex';
-import func from 'vue-editor-bridge';
+
+import { imgs, links } from '../../asset'
+import { detailedData } from '../../ticketData'
 
 export default {
    
@@ -175,23 +175,36 @@ export default {
        const Airline_logo = imgs('Air_India_Express_logo.svg')
        const save_icon = imgs('save_16.png')
        const printer_icon = imgs('printer_11.png')
-
        const booking_status = ref(false)
-
-       const booking_data = computed(function() { return { from: 'DEL',
-                                                           from_airport: 'Indira Gandhi International Airport',
-                                                           from_address: 'New Delhi', 
-                                                           dep_date: '1 JAN | MON ',
-                                                           acceptance_time: '08:00 PM',
-                                                           to: 'BOM',
-                                                           to_airport: 'Chhatrapati Shivaji Maharaj International Airport',
-                                                           to_address: 'Mumbai',
-                                                           arr_date: '2 JAN | TUE', 
-                                                           arrival_time: '10:20 AM',
-                                                        }
-                                                })
-        function bookNow() { booking_status.value = true }
-
+       
+       const raw_data = computed(function() {
+           const ticket_no = store.getters['bookingdat/getCheckoutData'];
+           const ticketData = store.getters['ticketsdat/getTickets'].find(element => element[2] == ticket_no)
+           if (ticketData != undefined && ticketData != '') {
+               return ticketData
+               }
+            else {
+                fetch(links('flight') + new URLSearchParams({id: ticket_no}), { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + store.getters['userdat/getToken']}})
+                .then((response) => {
+                    if (response.ok) { return response.json() }
+                    else if (response.status >= 400) { router.replace('/') }
+                    else { console.log("fetch failed") }
+                })
+                .then((data)=> {
+                    return data
+                })
+            }      
+        })
+                // const response = await fetch(links('flight') + new URLSearchParams({id: ticket_no}), { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + store.getters['userdat/getToken']}})
+                // let data = null
+                // if (response.ok) { data = await response.json() }
+                // else if (response.status >= 400) { router.replace('/') }
+                // else { console.log("fetch failed") }
+                // const dat = await data
+                // return dat
+       const booking_data = computed(function() { return detailedData(raw_data) })
+      
+        function bookNow() { console.log(raw_data.value)}
 
     return { AEROPLANE_LOGO, Airline_logo, save_icon, printer_icon, booking_status, bookNow, booking_data }
     }
