@@ -34,6 +34,11 @@ export default {
     border-radius: 2rem;
     color: #000;
 }
+
+/* For highlighting expanded airline card in airline listings page. */
+.active-card {
+  box-shadow: 0px 0px 4px 3px rgba(0, 0, 0, 0.3);
+}
 /* Added ends */
 * {
   box-sizing: border-box;
@@ -91,9 +96,7 @@ nav {
 .current-page {
   background-color: #ffcb00;
   border-radius: 3px;
-}
-.current-page-span {
-  color: #000;
+  color: #000 !important;
 }
 
 /* Hero Section */
@@ -1087,7 +1090,7 @@ footer .nav-links a:hover {
   /* border: green 2px solid; */
   display: block;
   /* display: none; */
-  min-height: 280px;
+  /* min-height: 280px; */
   padding: 0.6rem 1.2rem;
   overflow: auto;
 }
@@ -1188,7 +1191,6 @@ footer .nav-links a:hover {
   border-radius: 2rem;
   display: flex;
   flex-direction: column;
-  position: absolute;
   width: 100%;
   /* margin: 0 auto; */
   background-color: rgba(255, 255, 255, 0.863);
@@ -2016,6 +2018,13 @@ icon from the input field. ================================== */
 .login-signup h2 {
   text-align: center;
   margin-bottom: 1rem;
+}
+
+.login-signup p {
+  text-align: center;
+  /* margin-bottom: 1rem; */
+  text-decoration: none;
+  color: #6e6e6e;
 }
 
 /* =========================================================Login Ends============================================================ */

@@ -3,7 +3,7 @@
         <div class="nav-container">
             <div class="logo"><a :href="home_link"><img :src="CARGO247_Dark_BG_Logo" alt=""></a></div>
             <div class="nav-links">
-                <router-link to="/search">Search</router-link>
+                <router-link to="/search"> Search</router-link>
                 <router-link to="/transactions">Bookings</router-link>
                 <router-link to="/wallet"> Wallet</router-link>
                 <router-link to="/requests">Requests</router-link>
