@@ -71,7 +71,6 @@ const userdat = {
     },
 
     actions: {
-
         authenticateUser(context, payload) {
             if (localStorage.getItem('c247-token')) {
                 context.commit('authenticateUser', payload);
@@ -108,18 +107,29 @@ const userdat = {
             })
         },
 
-        updateWallet(context, payload) {
+        async updateWallet(context, payload) {
             if (payload[1] == true ) {
                 let midform = context.rootState.bookingdat.cargodetails
                 if (midform[midform.length -1]) {
                     midform = midform[midform.length - 1]
                     const data = [payload[0], midform.dimension, midform.length, midform.width, midform.height, midform.quantity, midform.type, midform.stacking, midform.turnable]
-                    context.commit('updateWallet', data)
+                    context.state.WalletfetchStatus = false
+                    postData(links('update_wallet'), { data: data }, context.state.token)
+                    .then((dat) => { 
+                    context.commit('updateWallet', dat)
+                    })
                 } else { 
                     const data = [payload[0], null]
-                    context.commit('updateWallet', data)
+                    postData(links('update_wallet'), { data: data }, context.state.token)
+                    .then((dat) => { 
+                    context.commit('updateWallet', dat)
+                    })
                 }
             } else {
+                postData(links('update_wallet'), { data: [payload[0]] }, context.state.token)
+                    .then((dat) => { 
+                    context.commit('updateWallet', dat)
+                    })
                 context.commit('updateWallet', [payload[0]])
             }
             
