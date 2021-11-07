@@ -9,35 +9,39 @@ const ticketsdat = {
     },
 
     mutations: {
-        async fetchTickets(state, payload) {
-            state.areTicketsavailable = false;
-            state.ticketsbytime = [];
-            state.ticketsbycost = [];
-            await fetch(links('flights') + new URLSearchParams({from: payload.from, to: payload.to, date: payload.date}), { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + payload.token }}).then((response)=> {
-                if (response.ok) { return response.json() }
-                else if (response.status >= 400) { router.replace('/') }//redirect to login}
-                else { console.log("fetch failed")}     
-                }).then((dat)=> {
-                    state.earliest = dat[0][2]         
-                    sortTickets(dat, state.ticketsbytime);
-                    dat.sort(function(a, b){return a[11]-b[11]});  
-                    state.cheapest = dat[0][2]             
-                    sortTickets(dat, state.ticketsbycost);
-                    state.areTicketsavailable = true;
-                });},
         filterChange(state, payload) {
             if (payload == 'earliest') { state.filterEarliest= true; state.filterCheapest= false; state.filterSameday= false; state.filterbest= false; state.filtergreenest=false }
             else if (payload == 'cheapest') {state.filterEarliest= false; state.filterCheapest= true; state.filterSameday= false; state.filterbest= false; state.filtergreenest=false }
             else if (payload == 'same-day') {state.filterEarliest= false; state.filterCheapest= false; state.filterSameday= true; state.filterbest= false; state.filtergreenest=false }
             else if (payload == 'best') {state.filterEarliest= false; state.filterCheapest= false; state.filterSameday= false; state.filterbest= true; state.filtergreenest=false }
             else if (payload == 'greenest') {state.filterEarliest= false; state.filterCheapest= false; state.filterSameday= false; state.filterbest= false; state.filtergreenest=true}
-                }
+        },
     },
 
     actions: {
+        async fetchTickets(context, payload) {
+            context.state.areTicketsavailable = false;
+            context.state.ticketsbytime = [];
+            context.state.ticketsbycost = [];
+            await fetch(links('flights') + new URLSearchParams({from: payload.from, to: payload.to, date: payload.date }), { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + context.rootState.userdat.token }}).then((response)=> {
+                if (response.ok) { return response.json() }
+                else if (response.status >= 400) { router.replace('/'); context.commit('userdat/unauthenticateUser', null, { root: true }) }
+                else { console.log("fetch failed")}     
+                }).then((dat)=> {
+                    context.state.earliest = dat[0][2]         
+                    sortTickets(dat, context.state.ticketsbytime);
+                    dat.sort(function(a, b){return a[11]-b[11]});  
+                    context.state.cheapest = dat[0][2]             
+                    sortTickets(dat, context.state.ticketsbycost);
+                    context.state.areTicketsavailable = true;
+                }
+                );
+        },
+
         filterChange(context, payload) {
             context.commit('filterChange', payload);
-        }
+        },
+   
     },
 
     getters: {

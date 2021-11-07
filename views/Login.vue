@@ -20,11 +20,11 @@
                 <div class="fill-in">
                     <h4>Password</h4>
                     <div class="searchable">
-                        <input type="text" placeholder="" ref="login_password" @input="error = false">
+                        <input type="text" placeholder="" ref="login_password" v-on:keyup.enter="submitLogin" @input="error = false">
                     </div>
                 </div>
                 <div class="fill-in btn">
-                    <button type="submit" @click.prevent="submitLogin">Login</button>
+                    <button type="submit" @click.prevent="submitLogin" >Login</button>
                 </div>
             </div>            
             <a href="https://c247feedbacktrial-ver1.herokuapp.com/reset_password" id="forget-password"><p>Forgot Password</p></a>

@@ -1,6 +1,5 @@
 <template>
 <section v-if="confirmBooking">
-    <div class="filters">
         <div class="filter-grid">
             <h3>Filters</h3>
             <div class="filter-box earliest" v-bind:class="{earliestInactiveClass: !earliestFilter}" @click="changeFilter('earliest')">Earliest</div>
@@ -9,8 +8,7 @@
             <div class="filter-box best" v-bind:class="{bestActiveClass: bestFilter}" @click="changeFilter('best')">Best</div>
             <div class="filter-box greenest" v-bind:class="{greenestActiveClass: greenestFilter}" @click="changeFilter('greenest')">Greenest</div>
         </div>
-    </div>
-        <single-airline v-for="airline in Airlines" :key="airline" :tickets="airline" > </single-airline>
+        <single-airline v-for="airline in Airlines" :key="airline" :tickets="airline" @edit-form="$emit('edit-form')"> </single-airline>
 </section>
 </template>
 
@@ -24,6 +22,7 @@ export default {
     components: {
         SingleAirline,
     },
+    emits: ['edit-form'],
 
     setup() {
         const store = useStore();
@@ -59,114 +58,3 @@ export default {
     },
 }
 </script>
-
-<style scoped>
-.filters {
-    width: 100%;
-    max-width: 1600px;
-    margin: 1rem auto 0 auto;
-}
-.filter-grid {
-    display: grid;
-    grid-template-columns: repeat(6,10rem);
-    justify-content: space-between;
-}
-.filter-grid h3 {
-    margin: auto;
-}
-.filter-box {
-    padding: .5rem 2rem .5rem 1rem;
-    border-left: 2rem #3f3f3f solid;
-    /* box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3); */
-    border-radius: 0.5rem;
-    background: #fff;
-    opacity: .4;
-    cursor: pointer ;
-}
-.earliest {
-    border-left: 2rem #345EFF solid;
-    opacity: 1;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
-}
-.sameday {
-    background: #333;
-    border-left: 2rem #ffcb00 solid;
-    color: #fff;
-}
-.cheapest {
-    border-left: 2rem #8F55A2 solid;
-}
-.greenest {
-    border-left: 2rem #9ACD32 solid;
-    
-}
-.best {
-    border-left: 2rem solid #459FE3;
-}
-.filter-box:hover {
-    opacity: 1;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
-}
-
-
-.earliestInactiveClass {
-    padding: .5rem 2rem .5rem 1rem;
-    border-radius: 0.5rem;
-    background: #fff;
-    opacity: .4;
-    cursor: pointer ;
-    border-left: 2rem #345EFF solid;
-}
-
-.cheapestActiveClass {
-    padding: .5rem 2rem .5rem 1rem;
-    border-left: 2rem #3f3f3f solid;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
-    border-radius: 0.5rem;
-    background: #fff;
-    opacity: .6;
-    cursor: pointer ;
-    border-left: 2rem #8F55A2 solid;
-    opacity: 1;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
-}
-.samedayActiveClass {
-    padding: .5rem 2rem .5rem 1rem;
-    border-left: 2rem #3f3f3f solid;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
-    border-radius: 0.5rem;
-    background: #fff;
-    opacity: .6;
-    cursor: pointer ;
-    background: #333;
-    border-left: 2rem #ffcb00 solid;
-    color: #fff;
-    opacity: 1;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
-}
-.bestActiveClass {
-    padding: .5rem 2rem .5rem 1rem;
-    border-left: 2rem #3f3f3f solid;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
-    border-radius: 0.5rem;
-    background: #fff;
-    opacity: .6;
-    cursor: pointer ;
-    border-left: 2rem solid #459FE3;
-    opacity: 1;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
-}
-.greenestActiveClass {
-    padding: .5rem 2rem .5rem 1rem;
-    border-left: 2rem #3f3f3f solid;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
-    border-radius: 0.5rem;
-    background: #fff;
-    opacity: .6;
-    cursor: pointer ;
-    border-left: 2rem #9ACD32 solid;
-    opacity: 1;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
-}
-
-</style>

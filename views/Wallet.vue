@@ -37,15 +37,3 @@ export default {
     },
 }
 </script>
-
-
-
-<style>
-
-#saved-entries {
-    max-width: 1600px;
-    margin: 3.5rem auto ;
-    padding: 0 1rem;
-}
-
-</style>

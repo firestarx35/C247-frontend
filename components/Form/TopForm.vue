@@ -2,15 +2,15 @@
 <div class="cargo-details-container">
     <h1>Enter Flight Details</h1>
 
-    <form class="form-grid">
+    <form @submit.prevent="null" class="form-grid">
         <div class="form-element">
             <div class="fill-in my-1">
                 
                 <h4>From</h4>
                 <div class="searchable">
-                <input type="text" placeholder="Source" v-model.trim="source" @input="onChange('source')" @keyup.down="arrowDown" @keyup.up="arrowUp" @keyup.enter.prevent="onEnter('source')" @blur="fetchTickets">
+                <input type="text" placeholder="Source" v-model.trim="source" @input="onChange('source')" @keyup.down="arrowDown" @keyup.up="arrowUp" @keyup.enter.prevent="onEnter('source')">
                     <ul class="dropdown-search" v-show="sourceOpen">
-                        <li :class="{ 'active-list': i === arrowCounter }" v-for="(result, i) in results.slice(0,9)" :key="i" @click="setResult(i, 'source')" ><h3>{{result.airportCode}},   {{ result.airportName}},   {{result.cityName}}</h3></li>
+                        <li :class="{ 'active-list': i === arrowCounter }" v-for="(result, i) in results.slice(0,9)" :key="i" @click="setResult(i, 'source'); console.log('Trigerred click 1')" ><h3>{{result.airportCode}},   {{ result.airportName}},   {{result.cityName}}</h3></li>
                     </ul>
                 </div>   
             
@@ -21,7 +21,7 @@
                 
                 <h4>To</h4>                        
                 <div class="searchable">
-                <input type="text" placeholder="Destination" v-model.trim="destination" @input="onChange('destination')" @keyup.down="arrowDown" @keyup.up="arrowUp" @keyup.enter="onEnter('destination')" @blur="fetchTickets">
+                <input type="text" placeholder="Destination" v-model.trim="destination" @input="onChange('destination')" @keyup.down="arrowDown" @keyup.up="arrowUp" @keyup.enter.prevent="onEnter('destination')">
                     <ul class="dropdown-search" v-show="destinationOpen">
                         <li :class="{ 'active-list': i === arrowCounter }" v-for="(result, i) in results.slice(0,9)" :key="i" @click="setResult(i,'destination')" ><h3>{{result.airportCode}},   {{ result.airportName}},   {{result.cityName}}</h3></li>
                     </ul>
@@ -34,7 +34,7 @@
                 
                 <h4>Date</h4>                        
                 <div class="searchable">
-                    <input type="date" placeholder="dd/mm/yyyy"  ref="dates"  @blur="fetchTickets">
+                    <input type="date" placeholder="dd/mm/yyyy"  ref="dates">
                 </div>
 
             </div>
@@ -106,6 +106,7 @@ export default {
 
         function setResult(i, val) {
             if (val === 'source') {
+                console.log('Trigerred click')
                 source.value = results.value[i].airportCode;
                 sourceOpen.value = false
             } else {
@@ -116,7 +117,7 @@ export default {
        
         function fetchTickets() {
             if ( (source.value != '') && (destination.value != '') && (dates.value.value !='') ) {
-                const routedata = { from: source.value.toUpperCase(), to: destination.value.toUpperCase(), date: dates.value.value, token: store.getters['userdat/getToken'] };
+                const routedata = { from: source.value.toUpperCase(), to: destination.value.toUpperCase(), date: dates.value.value };
                 store.dispatch('bookingdat/addtopform', routedata);
             }}
 

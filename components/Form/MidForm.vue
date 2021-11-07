@@ -1,12 +1,12 @@
 <template>
     <div class="cargo-details-container">
         <h1>Cargo Details</h1>
-        <form class="form-grid">
+        <form  class="form-grid">
             <div class="form-element" >
                  <div class="fill-in my-1">
                         <h4>Type</h4>
                         <div class="searchable">
-                            <input type="text" placeholder="Cargo Type" v-model="cargo" @focus="showList = true" @keyup.down="arrowDown" @keyup.up="arrowUp" @keyup.enter.prevent="onEnter">
+                            <input type="text" placeholder="Cargo Type" v-model="cargo" @focus="showList = true" @keyup.down="arrowDown" @keyup.up="arrowUp" @keydown.enter.prevent="onEnter">
                             <ul class="dropdown-search" v-if="showList">
                                 <li v-for="(type, i) in cargotypes" :key="i" :class="{'active-list': i === arrowCounter }" @click="setCargotype(type)"><h3>{{type}}</h3></li> 
                             </ul>

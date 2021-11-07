@@ -26,7 +26,7 @@
                     <div class="column-2">
                         <p>Current Rate: INR {{Data.rate}}</p>
                         <p>Chargable Weight: 100kg</p>
-                        <button class="btn">Book Now</button>
+                        <button class="btn" @click="CheckoutData">Book Now</button>
                     </div>
                 </div>
             </div>
@@ -35,12 +35,17 @@
 
 <script>
 import { computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import { imgs } from '../../asset'
 
 export default {
     emits: ['remove-wallet'],
     props: ['savedTicket'],
     setup(props) {
+        const store = useStore();
+        const router = useRouter();
+
         const dots = imgs('Dots.svg')
 
          const airline = computed(function() {
@@ -73,164 +78,13 @@ export default {
             const datetime = newDate.getDate() + ' '+ month.toUpperCase() + ' ' +  dayName.toUpperCase() + ' | '+ newDate.toLocaleTimeString([], { hour: '2-digit', minute:'2-digit'})
             return  datetime 
         }
+        function CheckoutData() {
+            
+            store.dispatch('bookingdat/addCheckout', props.savedTicket[2]);
+            router.push('/search/checkout')
+        }
         
-        return { dots, props, Data, airline }
+        return { dots, props, Data, airline, CheckoutData }
     },
 }
 </script>
-
-<style scoped>
-
-section p {
-    margin-left: 2rem;
-    color: rgba(0, 0, 0, 0.8);
-    font-size: 25px;
-}
-.saved-container {
-    max-width: 1600px;
-    margin: 0.8rem auto auto auto;
-    position: relative;
-}
-
-.saved-card {
-    width: 100%;
-    height: 9rem;
-    background: #fff;
-    border-radius: 1.2rem;
-    align-items: center;
-    display: flex;
-    padding: 1rem;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
-    margin-bottom: 1rem;
-}
-.saved-card:hover {
-    box-shadow: 0px 0px 8px 3px rgba(0, 0, 0, 0.3);
-}
-.saved-card .airports {
-    display: flex;
-    flex-direction: column;
-}
-.saved-card .airports div{
-    display: flex;
-    align-items: center;
-    padding: 0rem;
-    margin: auto;
-}
-.saved-card .airports div img {
-    width: 75px;
-    margin: 1rem;
-}
-.saved-card .airports div p {
-    font-size: 2rem;
-    margin: 0;
-}
-.saved-card .airline {
-    height: 100%;
-    display: flex;
-    align-content: center;
-    padding: 1rem;
-    margin: 0 1rem;
-    border-left: 2px solid rgba(128, 128, 128, 0.233);
-    border-right: 2px solid rgba(128, 128, 128, 0.219);
-}
-.saved-card .airline img {
-    width: 100px;
-}
-.details {
-    width: 100%;
-    height: 100%;
-    display: flex;    
-    flex-direction: column;
-    justify-content: space-between;
-}
-.details .column-1 {
-    display: flex;
-    justify-content: space-between;
-    max-width: 2000px;
-}
-.details .column-1 .departure {
-    display: flex;
-    flex-direction: column;
-}
-.details .column-1 .departure p,
-.details .column-1 .arrival p {
-    font-size: 1.2rem;
-    margin: .5rem 0;
-}
-.details .column-1 .arrival {
-    display: flex;
-    flex-direction: column;
-    text-align: right;
-}
-.details .column-2 {
-    display: flex;
-    justify-content: space-between;
-    max-width: 2000px;
-    align-items: center;
-}
-.column-2 p {
-    font-size: 1.4rem;
-    margin: 0;
-}
-.column-2 button {
-    background: #ffcb00;
-    width: 16rem;
-    border-radius: 2rem;
-    outline: none;
-    border: none;
-    height: 2.2rem;
-    cursor: pointer;
-}
-
-/* ===Cross Button=== */
-.saved-card .cross-button span {
-    font-size: 1rem;
-    width: 100%;
-    text-align: center;
-    padding-bottom: 0.2rem;
-    /* border: 1px solid red; */
-}
-.saved-card .cross-button {
-    display: none;
-    cursor: pointer;
-    background-color: #ffcc00;
-    position:absolute;
-    top: 0.4rem;
-    left: 0.4rem;
-    width: 1.5rem;
-    border-radius: 50%;
-}
-.saved-card:hover .cross-button {
-    display: flex;
-}
-
-
-/* ==================================Saved Card Ends============================= */
-
-
-
-/* ==================================Media Queries============================= */
-
-
-@media screen and (max-width: 1200px) {
-    
-    .saved-card .airports div p {
-        font-size: 1.5rem;
-        margin: 0;
-    }
-    .details .column-1 .departure h1,
-    .details .column-1 .arrival h1 {
-        font-size: 1.3rem;
-    }
-    .details .column-1 .departure p,
-    .details .column-1 .arrival p {
-        font-size: 1rem;
-    }
-    .column-2 p {
-        font-size: 1rem;
-    }
-    .column-2 button {
-        width: 10rem;
-    }
-}
-</style>
