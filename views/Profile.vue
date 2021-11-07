@@ -45,8 +45,7 @@
                     <div class="fill-in-2 my-1">
                         <h4>First Name</h4>                        
                         <div class="searchable-2">
-                            <p>{{profileData[0]}}</p>
-                            <input type="text" placeholder="James">                            
+                            <input type="text" :placeholder="profileData[0]">                            
                         </div>
                     </div>
                 </div>
@@ -54,8 +53,7 @@
                     <div class="fill-in-2 my-1">
                         <h4>Last Name</h4>                        
                         <div class="searchable-2">
-                            <p>{{profileData[1]}}</p>
-                            <input type="text" placeholder="Bondwa">                            
+                            <input type="text" :placeholder="profileData[1]">                            
                         </div>
                     </div>
                 </div>
@@ -63,8 +61,7 @@
                     <div class="fill-in-2 my-1">
                         <h4>Email</h4>                        
                         <div class="searchable-2">
-                            <p>{{profileData[2]}}</p>
-                            <input type="text" placeholder="Bondwa">                            
+                            <input type="text" :placeholder="profileData[2]">                            
                         </div>
                     </div>
                 </div>
@@ -73,8 +70,7 @@
                     <div class="fill-in-2 my-1">
                         <h4>Phone Number</h4>                        
                         <div class="searchable-2">
-                            <p>{{profileData[7]}}</p>
-                            <input type="text" placeholder="9876543210">                            
+                            <input type="text" :placeholder="profileData[7]">                            
                         </div>
                     </div>
                 </div>
@@ -82,8 +78,7 @@
                     <div class="fill-in-2 my-1">
                         <h4>Company Name</h4>                        
                         <div class="searchable-2">
-                            <p>{{profileData[4]}}</p>
-                            <input type="text" placeholder="Bigger Than Apple Inc.">                            
+                            <input type="text" :placeholder="profileData[4]">                            
                         </div>
                     </div>
                 </div>
@@ -91,8 +86,7 @@
                     <div class="fill-in-2 my-1">
                         <h4>IATA Code</h4>                        
                         <div class="searchable-2">
-                            <p>{{profileData[3]}}</p>
-                            <input type="text" placeholder="ABC79065015">                            
+                            <input type="text" :placeholder="profileData[3]">                            
                         </div>
                     </div>
                 </div>
@@ -100,14 +94,12 @@
                     <div class="fill-in-2 my-1">
                         <h4>Pincode</h4>                        
                         <div class="searchable-2">
-                            <p>{{profileData[6]}}</p>
-                            <input type="text" placeholder="1111111">                            
+                            <input type="text" :placeholder="profileData[6]">                            
                         </div>
                     </div>
                 </div>
 
             </div>
-
 
             <div class="chats">
                 <div>

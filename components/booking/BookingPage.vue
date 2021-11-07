@@ -6,12 +6,12 @@
 
                 <div class="flight-grid">
                     <div class="source-info">
-                        <h1>{{booking_data.source_name}} </h1>
+                        <h1>{{booking_data.source.code}} </h1>
                         <h3>{{booking_data.source_date.date}}</h3>
                         <div>
                             <h4>Latest acceptance time: {{booking_data.source_date.time}} </h4>
-                            <h5>From address: {{booking_data.source_airport_address }}</h5>
-                            <h5>From airport: {{booking_data.source_airport_name}}</h5>
+                            <h5>Airport: {{booking_data.source.name}}</h5>
+                            <h5>Address: {{booking_data.source.address }}</h5>
                         </div>
                     </div>
                     <div class="icons">
@@ -19,12 +19,12 @@
                         <img :src="booking_data.airline.logo">
                     </div>
                     <div class="dest-info">
-                        <h1>{{booking_data.destination_name}}</h1>
+                        <h1>{{booking_data.destination.code}}</h1>
                         <h3>{{booking_data.destination_date.date}}</h3>
                         <div>
                             <h4>Arrival time: {{booking_data.destination_date.time}}</h4>
-                            <h5>To address: {{booking_data.destination_airport_address}} </h5>
-                            <h5>To airport: {{booking_data.destination_airport_name}} </h5>
+                            <h5>Airport: {{booking_data.destination.name}} </h5>
+                            <h5>Address: {{booking_data.destination.address}} </h5>
                         </div>
                     </div>
                 </div>

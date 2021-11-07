@@ -5,58 +5,59 @@
            
             <div class="source-destination">
                 <div class="source-text">
-                    <h3>{{detailedData.source_airport}}</h3>
-                    <h3>{{detailedData.source_date.date}}</h3>
-                    <h2>{{detailedData.source_date.time}}</h2>
-                    <h5>{{detailedData.source_airport_name}}</h5>
-                    <h5>{{detailedData.source_airport_address}}</h5>
+                    <h3>{{ticketData.source.code}}</h3>
+                    <h3>{{ticketData.source_date.date}}</h3>
+                    <h2>{{ticketData.source_date.time}}</h2>
+                    <h5>{{ticketData.source.name}}</h5>
+                    <h5>{{ticketData.source.address}}</h5>
                 </div>
                 
                 <div class="plane-number-logo">
                     <img :src="aeroplane_logo" alt="Aeroplanes">
-                    <h2>{{detailedData.flightid}}</h2>
+                    <h2>{{ticketData.flightid}}</h2>
                 </div>
                 
                 <div class="dest-text">
-                    <h3>{{detailedData.destination_airport}}</h3>
-                    <h3>{{detailedData.destination_date.date}}</h3>
-                    <h2>{{detailedData.destination_date.time}}</h2>
-                    <h5>{{detailedData.destination_airport_name}}</h5>
-                    <h5>{{detailedData.destination_airport_address}}</h5>
+                    <h3>{{ticketData.destination.code}}</h3>
+                    <h3>{{ticketData.destination_date.date}}</h3>
+                    <h2>{{ticketData.destination_date.time}}</h2>
+                    <h5>{{ticketData.destination.name}}</h5>
+                    <h5>{{ticketData.destination.address}}</h5>
                 </div>
             </div>
         </div>
         
         <div class="cost-breakdown">
             <div class="rate-duration-total">
-                <h3>Rate: &#8377; {{charges.rate}}/kg</h3>
-                <h3>Duration: {{charges.duration}} Hrs</h3>
-                <h3>Total: <span v-if="displayAddcargo">&#8377; </span>{{charges.Total}}</h3><button class="btn-3" v-if="!displayAddcargo" @click="$emit('edit-form')"> Add Cargo Details</button>
+                <h3>Rate: {{ticketData.amount.rate}}</h3>
+                <h3>Duration: {{ticketData.duration}} Hrs</h3>
+                <h3>Total: <span v-if="ticketData.amount.available"> </span>{{ticketData.amount.Total}}</h3><button class="btn-3" v-if="!ticketData.amount.available" @click="$emit('edit-form')"> Add Cargo Details</button>
             </div>
 
-            <div class="costs" v-if="displayAddcargo">
-                <h3> Airline Costs: &#8377; {{charges.airline_cost}}</h3>
+            <div class="costs" v-if="ticketData.amount.available">
+                <h3> Airline Costs:{{ticketData.amount.airline_cost}}</h3>
                 <h3>+</h3>
-                <h3>Fuel Surcharge: &#8377; {{charges.fuel_surcharge}}</h3>
+                <h3>Fuel Surcharge:{{ticketData.amount.fuel_surcharge}}</h3>
                 <h3>+</h3>
-                <h3>GST @ 18%: &#8377; {{charges.gst}}</h3>
+                <h3>GST: {{ticketData.amount.gst}}</h3>
                 <h3>+</h3>
-                <h3>Cargo247 Charge: &#8377; {{charges.cargo247_charge}}</h3>
+                <h3>Cargo247 Charge:{{ticketData.amount.cargo247_charge}}</h3>
             </div>
 
             <div>
                 <button class="btn-3" @click="addtoWallet">Save for later</button>
-                <button class="btn-3" v-if="displayAddcargo" @click="CheckoutData">Book Now</button>
+                <button class="btn-3" v-if="ticketData.amount.available" @click="CheckoutData">Book Now</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router'
 import { imgs } from '../../asset'
+import { detailedData } from '../../ticketData'
 
 export default {
     emits: ['edit-form'],
@@ -67,48 +68,7 @@ export default {
 
         const aeroplane_logo = imgs('AEROPLANE-LOGO.png')
 
-        const displayAddcargo = ref(false);
-
-        const detailedData = computed (function() {
-            return { source_airport: props.ticket[4],
-                    source_date: customDate(props.ticket[1]),
-                    source_airport_name: 'Airport Name',
-                    source_airport_address: 'Airport Address',
-                    flightid: props.ticket[3],
-                    destination_airport: props.ticket[5],
-                    destination_date: customDate(props.ticket[6]),
-                    destination_airport_name: 'Airport Name',
-                    destination_airport_address: 'Airport Address',
-                }
-        })
-
-        const charges = computed(function() {
-            const weight = store.getters['bookingdat/getWeight']
-            if ( weight != null ) { 
-                displayAddcargo.value = true; 
-                const airline_cost = weight*props.ticket[11]; 
-                const gst = Math.round(airline_cost*0.18);
-                return { rate: props.ticket[11], duration: duration.value, airline_cost: airline_cost, gst: gst, Total: airline_cost + gst, fuel_surcharge: 120, cargo247_charge: 5 } ////To be replaced by airline data
-            } else { 
-                return { rate: props.ticket[11], duration: duration.value, Total: 'Cargo details required'} }
-        })
-
-        const duration = computed(function() {
-            const minutes = ((new Date(props.ticket[6]) -  new Date(props.ticket[1]))/60000);
-            const hours = Math.floor(minutes/60);
-            const remainingminutes = minutes%60;
-            return  hours + ':'+ remainingminutes
-        })
-        
-        function customDate(dates) {
-            const newDate = new Date(dates)
-            const month = newDate.toLocaleString('default', { month: 'long' });
-            const dayName = newDate.toString().split(' ')[0];
-            const datetime = { date: newDate.getDate() + ' '+ month.toUpperCase() + ' ' +  dayName.toUpperCase(),
-                                time: newDate.toLocaleTimeString([], { hour: '2-digit', minute:'2-digit'})
-                                }
-            return datetime
-        }
+        const ticketData = computed (function() { return detailedData(props.ticket) })
 
         function addtoWallet() {
             const existing_tickets = store.getters['userdat/getWallet']
@@ -126,7 +86,7 @@ export default {
             router.push('/search/checkout')
         }
 
-        return { aeroplane_logo, detailedData, displayAddcargo, charges, addtoWallet, CheckoutData }
+        return { aeroplane_logo, ticketData, addtoWallet, CheckoutData }
     },
 }
 </script>
