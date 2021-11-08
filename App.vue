@@ -1571,7 +1571,7 @@ footer .nav-links a:hover {
   background: #fff;
   color: #000;
   padding: 2rem;
-  margin: auto;
+  margin: 1rem auto;
   border-radius: 2rem;
   box-shadow: 0px 0px 5px 4px rgba(92, 92, 92, 0.315);
 }
@@ -1619,7 +1619,6 @@ footer .nav-links a:hover {
 }
 
 .icons img {
-  width: 60%;
   margin: 0 auto;
 }
 
@@ -2276,33 +2275,10 @@ ul li h3 {
   padding-top: 3.5rem;
 }
 
-.booking-container {
-  max-width: 1200px;
-  display: flex;
-  flex-direction: row;
-  background: #fff;
-  color: #000;
-  padding: 2rem;
-  margin: 1rem auto;
-  border-radius: 2rem;
-}
-
-.booking-container h1 {
-  margin: 1rem 0;
-  color: #000000c4;
-}
-
-.summary-section {
-  display: flex;
-  flex-direction: column;
-  padding-right: 2rem;
-  border-radius: 1rem;
-  padding: 0 2rem 2rem 2rem;
-}
 
 .flight-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr .7fr 1fr;
   margin: 2rem 0;
 }
 
@@ -2345,27 +2321,7 @@ ul li h3 {
 .cargo-grid h4 {
   font-weight: 400;
 }
-/* 
-.icons {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-} */
 
-.icons img {
-  width: 60%;
-  margin: 0 auto;
-}
-
-.dest-info {
-  padding-left: 1rem;
-  border-left: solid 3px lightgray;
-}
-
-.cargo-summary {
-  background: #d8d8d850;
-  border-radius: 1rem;
-}
 
 .cargo-grid {
   display: grid;
@@ -2531,7 +2487,7 @@ ul li h3 {
 /* ==================== Media Queries  =================== */
 @media screen and (min-width: 1000px) {
   .icons img {
-    width: 50%;
+    width: 60%;
   }
 }
 
