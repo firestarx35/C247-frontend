@@ -13,7 +13,7 @@ import TopForm from './TopForm.vue';
 import MidForm from './MidForm.vue';
 import SummaryForm from './SummaryForm.vue';
 
-import { computed, ref } from 'vue';
+import { computed, ref, onBeforeMount } from 'vue';
 import { useStore } from 'vuex';
 
 export default {
@@ -28,6 +28,8 @@ export default {
         const store = useStore();
 
         const formcounter = ref(1);
+        onBeforeMount(function() { store.dispatch('bookingdat/clearMidForm') })
+
         const summaryAvailable = computed(function() { if (store.getters['bookingdat/getformSummary']) { return true }
                                                      else { return false }
                                                      })

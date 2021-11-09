@@ -9,7 +9,7 @@
                     <p>Total Bookings: 17000</p>
                 </div>
                 <div>
-                    <img src="/images/tick_mark.png" alt="">
+                    <img :src="tick_mark">
                 </div>
             </div>
 
@@ -20,7 +20,7 @@
                     <p>Total Requests Booked: 1700</p>
                 </div>
                 <div>
-                    <img src="/images/request_icon.png  " alt="">
+                    <img :src="request_icon">
                 </div>
             </div>
 
@@ -31,10 +31,9 @@
                     <p>Total Time Saved: 1700 Hrs</p>
                 </div>
                 <div>
-                    <img src="/images/clock_icon.png" alt="">
+                    <img :src="clock_icon">
                 </div>
             </div>
-
         </div>
 
         <div class="profile-container-2">
@@ -113,10 +112,16 @@
 <script>
 import { computed, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
+import { imgs } from '../asset'
 
 export default {
     setup() {
         const store = useStore();
+        
+        const tick_mark = imgs('tick_mark.png')
+        const request_icon = imgs('request_icon.png')
+        const clock_icon = imgs('clock_icon.png')
+        
         const profileData = computed(function() { return store.getters['userdat/getProfile']} )
         const profileStatus = computed(function() { if (store.getters['userdat/getProfileStatus']) { if (store.getters['userdat/getProfile'].length > 0) { return true }
                                                                                                     else { return false }}
@@ -126,7 +131,7 @@ export default {
                                     else { store.dispatch('userdat/fetchProfile') }
                                     })
 
-        return { profileData, profileStatus }
+        return { tick_mark, request_icon, clock_icon, profileData, profileStatus }
         
     },
 }

@@ -82,7 +82,7 @@ export default {
             }
         }
         function CheckoutData() {
-            store.dispatch('bookingdat/addCheckoutData', props.ticket[2]);
+            store.dispatch('bookingdat/addCheckout', props.ticket[2]);
             router.push('/search/checkout')
         }
 

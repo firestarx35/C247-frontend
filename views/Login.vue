@@ -27,9 +27,8 @@
                     <button type="submit" @click.prevent="submitLogin" >Login</button>
                 </div>
             </div>            
-            <a href="https://c247feedbacktrial-ver1.herokuapp.com/reset_password" id="forget-password"><p>Forgot Password</p></a>
+            <a :href="reset_password" id="forget-password"><p>Forgot Password</p></a>
         </div>
-
 <!-- signup -->
         <div class="signup-form" v-if="!isSelected">
             <div class="form-element">
@@ -120,6 +119,7 @@ export default {
         const router = useRouter();
         const CARGO247_White_BG_Logo = imgs('CARGO247_White_BG_Logo.svg');
         const home_link = links('home')
+        const reset_password = links('reset_password')
 
         const isSelected = ref(true);
         const error = ref(false);
@@ -167,7 +167,6 @@ export default {
             if ((first_name.value.value!=='')&&(last_name.value.value!=='')&&(signup_email.value.value!=='')&&(signup_password.value.value!=='')&&
             (confirm_password.value.value!=='')&&(iata_number.value.value!=='')&&(pincode.value.value!=='')&&(country.value.value!=='')&&
             (company_name.value.value!=='')&&(mobile_number.value.value!=='')) {
-
                 if ( signup_password.value.value == confirm_password.value.value ) {
                     postData(links('signup_user'), { first_name: first_name.value.value, last_name: last_name.value.value,
                                                             email: signup_email.value.value, login_psk: signup_password.value.value,
@@ -194,7 +193,6 @@ export default {
                 }
                 else { errorCall("All fields should be filled!", false) } }
        
-
         function errorCall(val, display_type) {
             if (display_type == true ) { error_style.value = 'bluestyle' }
             else { error_style.value = 'redstyle' }
@@ -202,7 +200,7 @@ export default {
             error_text.value = val;
         }
         
-        return { CARGO247_White_BG_Logo, home_link, isSelected, submitSignup, submitLogin, login_email, login_password, first_name, 
+        return { CARGO247_White_BG_Logo, home_link, reset_password, isSelected, submitSignup, submitLogin, login_email, login_password, first_name, 
         last_name, signup_email, company_name, signup_password, confirm_password, iata_number, pincode, country, mobile_number,
         error, error_text, error_style, getSelected } 
     },

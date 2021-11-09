@@ -13,7 +13,7 @@
 <script>
 import SearchForm from '@/components/Form/SearchForm.vue'                 // @ is an alias to /src
 import MultipleAirlines from '@/components/tickets/MultipleAirlines.vue'
-import SummaryBox from '../components/booking/SummaryBox.vue'
+import SummaryBox from '../components/tickets/SummaryBox.vue'
 
 import { ref, computed, onBeforeMount } from 'vue';
 import { useStore } from 'vuex';
