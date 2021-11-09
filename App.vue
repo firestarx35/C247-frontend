@@ -1444,7 +1444,8 @@ section > h2 {
   /* border: 1px solid red; */
 }
 .saved-card .cross-button {
-  display: none;
+  display: flex;
+  visibility: hidden;
   cursor: pointer;
   background-color: #ffcc00;
   position:absolute;
@@ -1452,6 +1453,7 @@ section > h2 {
   left: 0.4rem;
   width: 1.5rem;
   border-radius: 50%;
+  align-items: center;
 }
 .saved-card:hover .cross-button {
   visibility: visible;
