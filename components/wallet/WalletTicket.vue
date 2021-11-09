@@ -1,4 +1,5 @@
 <template>
+ <div class="saved-container">
     <div class="saved-card">
         <div class="cross-button" @click="$emit('remove-wallet', ticket_data.flightno)"><span>&#10539;</span></div>
         <div class="flight-num">
@@ -27,6 +28,8 @@
             <button class="btn" @click="CheckoutData">Book Now</button>
         </div>
     </div>
+</div>
+
 </template>
 
 <script>
@@ -50,14 +53,18 @@ export default {
         function CheckoutData() {
             store.dispatch('bookingdat/clearMidForm')
             if (props.savedTicket.length > 12) { 
-                const midform =  { id: 1, length: props.savedTicket[13], width: props.savedTicket[14], height: props.savedTicket[15], weight: props.savedTicket[17], quantity: props.savedTicket[16], type: props.savedTicket[19], stacking: props.savedTicket[20], weighing: props.savedTicket[18], turnable: props.savedTicket[21], dimension: props.savedTicket[12]}
+                const midform =  { id: 1, length: props.savedTicket[13], width: props.savedTicket[14],
+                                    height: props.savedTicket[15], weight: props.savedTicket[17],
+                                    quantity: props.savedTicket[16], type: props.savedTicket[19],
+                                    stacking: props.savedTicket[20], weighing: props.savedTicket[18],
+                                    turnable: props.savedTicket[21], dimension: props.savedTicket[12] }
                 store.dispatch('bookingdat/addmidformData', midform)
                 store.dispatch('bookingdat/addCheckout', props.savedTicket[2]);
                 router.push('/search/checkout')
             } else {
-                store.dispatch('bookingdat/addCheckout', props.savedTicket[2]);
+                //store.dispatch('bookingdat/addCheckout', props.savedTicket[2]);
                 //Pop up MID FORM
-                router.push('/search/checkout')
+                //router.push('/search/checkout')
             }
             
         }

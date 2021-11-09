@@ -1,11 +1,10 @@
 <template>
     <section id="saved-entries">
             <div v-if="savedTicketStatus">
-                    <div class="saved-container">
+                   
 
                         <wallet-ticket v-for="savedTicket in savedTickets" :key="savedTicket" :savedTicket="savedTicket" @remove-wallet="removeWallet"> </wallet-ticket>
                     
-                    </div>
             </div>
             <h1 v-else> Your Wallet is Empty! </h1>
     </section>

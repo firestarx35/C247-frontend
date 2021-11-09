@@ -1,6 +1,6 @@
 
 let heroku_server = 'https://c247feedbacktrial-ver1.herokuapp.com'
-let development_server = 'http://127.0.0.1:5000'
+let development_server = 'http://192.168.29.112:5000/'
 
 let backend_ends = { home:'',
                      assets: '/api/assets/?name=',
