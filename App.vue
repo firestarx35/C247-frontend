@@ -28,6 +28,7 @@ export default {
 <style >
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&display=swap');
 
+
 /* Added styles */
 .active-list {
     background: #fff;
@@ -1280,17 +1281,17 @@ footer .nav-links a:hover {
 /* ==================================Airline listing Ends============================= */
 
 /* ======================================Cart Section starts=================================== */
+
 /* ==================================Saved Section============================= */
 
 #saved-entries {
   max-width: 1600px;
-  margin: 3.5rem auto;
+  margin: 3.5rem auto ;
   padding: 0 1rem;
 }
-#saved-entries > h2 {
+section > h2 {
   margin-left: 2rem;
   color: rgb(0, 0, 0);
-  font-weight: 500;
 }
 .saved-container {
   max-width: 1600px;
@@ -1300,96 +1301,124 @@ footer .nav-links a:hover {
 
 /* ==================================Saved Section Ends============================= */
 
+
 /* ==================================Saved Card============================= */
+
 
 .saved-card {
   width: 100%;
   min-width: 850px;
+  /* height: 11rem; */
   background: #fff;
   border-radius: 1.2rem;
   align-items: center;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
   padding: 1rem;
   box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
   margin-bottom: 1rem;
   overflow: auto;
 }
+
 .saved-card:hover {
   box-shadow: 0px 0px 8px 3px rgba(0, 0, 0, 0.3);
 }
-.saved-card .airports {
+
+.saved-card .flight-num {
   display: flex;
   flex-direction: column;
+  text-align: center;
+  /* border: solid 2px red; */
+  height: 100%;
+  padding: 1rem 0;
 }
-.saved-card .airports div {
-  display: flex;
-  align-items: center;
-  padding: 0rem;
+
+.saved-card .flight-num img {
+  width: 140px;
   margin: auto;
 }
-.saved-card .airports div img {
-  width: 75px;
-  margin: 1rem;
-}
-.saved-card .airports div p {
-  font-size: 2rem;
+
+.saved-card .flight-num p {
+  font-size: 1.7rem;
   margin: 0;
 }
-.saved-card .airline {
-  height: 100%;
+
+.saved-card .airports-data {
   display: flex;
-  align-content: center;
-  padding: 1rem;
-  margin: 0 1rem;
-  border-left: 2px solid rgba(128, 128, 128, 0.233);
-  border-right: 2px solid rgba(128, 128, 128, 0.219);
-}
-.saved-card .airline img {
-  width: 100px;
-}
-.details {
+  flex-direction: row;
   width: 100%;
   height: 100%;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  border-left: solid 3px #b9b9b9;
+  border-right: solid 3px #b9b9b9;
+}
+
+.saved-card .airports-data .source {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  text-align: start;
   justify-content: space-between;
 }
-.details .column-1 {
-  display: flex;
-  justify-content: space-between;
-  max-width: 2000px;
+
+.saved-card .airports-data .source h3,
+.saved-card .airports-data .destination h3 {
+    padding-bottom: .5rem;
+    font-size: 1.7rem;
+    width: 100%;
+    color: #555555;
+    font-weight: 500;
 }
-.details .column-1 .departure {
-  display: flex;
-  flex-direction: column;
-}
-.details .column-1 .departure h2,
-.details .column-1 .arrival h2 {
-  font-size: 1.6rem;
+
+.saved-card .airports-data .source h2,
+.saved-card .airports-data .destination h2 {
   font-weight: 500;
-  margin: 0.5rem 0;
+  color: #555555;
+  padding-bottom: .4rem;
+} 
+
+.saved-card .airports-data img {
+  width: 150px;
+  height: 30px;
+  margin: auto;
 }
-.details .column-1 .departure p,
-.details .column-1 .arrival p {
-  font-size: 1.2rem;
-  margin: 0.5rem 0;
-}
-.details .column-1 .arrival {
+
+.saved-card .airports-data .destination {
   display: flex;
   flex-direction: column;
-  text-align: right;
+  width: 100%;
+  justify-content: space-between;
+  text-align: end;
+  padding-bottom: .2rem;
 }
-.details .column-2 {
+
+.saved-card .airports-data .airport h3 {
+  /* padding: 0 2rem 0 0;
+  font-size: 1.4rem; */
+  padding-bottom: .2rem;
+}
+
+.saved-card .airports-data .airport {
   display: flex;
   justify-content: space-between;
-  max-width: 2000px;
-  align-items: center;
+  padding: 0 2rem 0 0;
 }
-.column-2 p {
-  font-size: 1.4rem;
-  margin: 0;
+
+.saved-card .cost-details {
+  padding-left: 2rem;
 }
-.column-2 button {
+
+.saved-card .cost-details h3,
+.saved-card .cost-details p {
+  padding-bottom: .4rem;
+}
+
+.saved-card .cost-details span {
+  font-weight: 600;
+}
+
+.cost-details button {
   background: #ffcb00;
   width: 16rem;
   border-radius: 2rem;
@@ -1397,13 +1426,12 @@ footer .nav-links a:hover {
   border: none;
   height: 2.2rem;
   cursor: pointer;
-  font-family: "montserrat";
-  font-weight: 500;
+  margin-top: 1rem;
 }
 
 .btn:hover {
   box-shadow: 5px 3px 10px rgba(0, 0, 0, 0.5);
-}
+} 
 
 /* ===Cross Button=== */
 .saved-card .cross-button span {
@@ -1411,26 +1439,71 @@ footer .nav-links a:hover {
   width: 100%;
   text-align: center;
   padding-bottom: 0.2rem;
+  /* border: 1px solid red; */
 }
 .saved-card .cross-button {
-  display: flex;
+  display: none;
   cursor: pointer;
   background-color: #ffcc00;
-  position: absolute;
+  position:absolute;
   top: 0.4rem;
   left: 0.4rem;
   width: 1.5rem;
   border-radius: 50%;
-  height: 1.5rem;
-  width: 1.5rem;
-  align-items: flex-end;
-  justify-content: center;
 }
 .saved-card:hover .cross-button {
   display: flex;
 }
 
+
 /* ==================================Saved Card Ends============================= */
+
+
+
+/* ==================================Media Queries============================= */
+
+
+@media screen and (max-width: 1200px) {
+  
+  .saved-card .airports div p {
+      font-size: 1.5rem;
+      margin: 0;
+  }
+  .details .column-1 .departure h1,
+  .details .column-1 .arrival h1 {
+      font-size: 1.3rem;
+  }
+  .details .column-1 .departure p,
+  .details .column-1 .arrival p {
+      font-size: 1rem;
+  }
+  .column-2 p {
+      font-size: 1rem;
+  }
+  .column-2 button {
+      width: 10rem;
+  }
+
+  .nav-links {
+      flex-wrap: wrap;
+  }
+
+  #saved-entries {
+      overflow: auto;
+  }
+
+  footer .logo-description {
+      height: 10rem;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .logo-description img {
+      width: 50%;
+      align-self: flex-start;
+  }
+}
+
 /* ======================================Cart Section Ends=================================== */
 
 /* ======================================Booking History Starts=================================== */
@@ -1571,7 +1644,7 @@ footer .nav-links a:hover {
   background: #fff;
   color: #000;
   padding: 2rem;
-  margin: auto;
+  margin: 1rem auto;
   border-radius: 2rem;
   box-shadow: 0px 0px 5px 4px rgba(92, 92, 92, 0.315);
 }
@@ -1619,7 +1692,6 @@ footer .nav-links a:hover {
 }
 
 .icons img {
-  width: 60%;
   margin: 0 auto;
 }
 
@@ -2276,33 +2348,10 @@ ul li h3 {
   padding-top: 3.5rem;
 }
 
-.booking-container {
-  max-width: 1200px;
-  display: flex;
-  flex-direction: row;
-  background: #fff;
-  color: #000;
-  padding: 2rem;
-  margin: 1rem auto;
-  border-radius: 2rem;
-}
-
-.booking-container h1 {
-  margin: 1rem 0;
-  color: #000000c4;
-}
-
-.summary-section {
-  display: flex;
-  flex-direction: column;
-  padding-right: 2rem;
-  border-radius: 1rem;
-  padding: 0 2rem 2rem 2rem;
-}
 
 .flight-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr .7fr 1fr;
   margin: 2rem 0;
 }
 
@@ -2345,27 +2394,7 @@ ul li h3 {
 .cargo-grid h4 {
   font-weight: 400;
 }
-/* 
-.icons {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-} */
 
-.icons img {
-  width: 60%;
-  margin: 0 auto;
-}
-
-.dest-info {
-  padding-left: 1rem;
-  border-left: solid 3px lightgray;
-}
-
-.cargo-summary {
-  background: #d8d8d850;
-  border-radius: 1rem;
-}
 
 .cargo-grid {
   display: grid;
@@ -2531,7 +2560,7 @@ ul li h3 {
 /* ==================== Media Queries  =================== */
 @media screen and (min-width: 1000px) {
   .icons img {
-    width: 50%;
+    width: 60%;
   }
 }
 

@@ -18,7 +18,7 @@ const userdat = {
             state.token = payload;
             state.isAuthenticated = true;
         },
-        unauthenticateUser(state) {
+        unauthenticateUser(state, payload) {
             state.ProfileData = null; 
             state.isprofileAvailable = false
             state.token = null;
@@ -40,6 +40,7 @@ const userdat = {
         fetchWallet(state, payload) {
             state.WalletTickets = []
             state.WalletTickets = payload
+            console.log(state.WalletTickets)
             state.WalletfetchStatus = true
         },
         fetchProfile(state, payload) {
@@ -50,6 +51,7 @@ const userdat = {
         updateWallet(state, payload) {
             state.WalletTickets = []
             state.WalletTickets = payload
+            console.log(state.WalletTickets)
             state.WalletfetchStatus = true; 
         },
         updateProfile(state, payload) {
@@ -68,8 +70,8 @@ const userdat = {
                 context.commit('authenticateUser', payload);
             } else { console.log("No token received") }
         }, 
-        unauthenticateUser(context, _) {
-            context.commit('unauthenticateUser')
+        unauthenticateUser(context) {
+            context.commit('unauthenticateUser', null)
         },
         addRoutes(context, payload) {
             context.commit('addRoutes', payload)
@@ -100,7 +102,7 @@ const userdat = {
                 let midform = context.rootState.bookingdat.cargodetails
                 if (midform[midform.length -1]) {
                     midform = midform[midform.length - 1]
-                    const data = [payload[0], midform.dimension, midform.length, midform.width, midform.height, midform.quantity, midform.type, midform.stacking, midform.turnable]
+                    const data = [payload[0], midform.dimension, midform.length, midform.width, midform.height, midform.quantity, midform.weight, midform.weighing, midform.type, midform.stacking, midform.turnable]
                     context.state.WalletfetchStatus = false
                     postData(links('update_wallet'), { data: data }, context.state.token)
                     .then((dat) => { 

@@ -17,7 +17,8 @@ const bookingdat = {
             state.topform = {from: payload.from, to: payload.to, date: payload.date };
         },
         addmidformData(state, payload) {
-            state.cargodetails.push(payload);               ///Need to clear it in case of successfull transaction or cancel transaction.
+            state.cargodetails.push(payload); 
+            console.log(state.cargodetails)   ///Need to clear it in case of successfull transaction or cancel transaction.
         },
         makeSummary(state, payload) {
             var k = 1;
@@ -29,6 +30,10 @@ const bookingdat = {
             const density = (weight/volume).toFixed(2);
             const summary = { TotalQuantity: payload.quantity, TotalVolume: volume.toFixed(2), TotalWeight: weight, Density: density, dimension: state.cargodetails[0].dimension};
             state.cargosummary.push(summary);
+        },
+        clearMidForm(state) {
+            state.cargodetails = []
+            state.cargosummary = []
         },
         addCheckout(state, payload) {
             state.checkout = null;
@@ -66,7 +71,7 @@ const bookingdat = {
            
         },
         addmidformData(context, payload) {
-            let i = context.state.cargodetails.findIndex(x => x.id == payload.id);
+            let i = context.state.cargodetails.findIndex(element => element.id == payload.id);
             if ( i > -1) { context.state.cargodetails.splice(i, 1); context.state.cargosummary.splice(i, 1); }
             context.commit('addmidformData', payload);
             context.commit('makeSummary', payload);
@@ -86,7 +91,11 @@ const bookingdat = {
                         context.commit('addCheckoutData', dat)
                     });
                 }      
-         },
+        },
+        clearMidForm(context) {
+            context.commit('clearMidForm')
+        }
+
     },
 
     getters: {
@@ -100,7 +109,7 @@ const bookingdat = {
             if (state.cargosummary.length > 0 ) { return state.cargosummary; } 
             else { return false }
         },
-        getmidform(state) {
+        getMidForm(state) {
             return state.cargodetails
         },
         getWeight(state) {

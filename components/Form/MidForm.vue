@@ -89,11 +89,11 @@
             </div>
         </form>
         <div class="form-grid">
-        <div class="form-element">
+        <!-- <div class="form-element">
             <div class="fill-in btn my-1" v-if=" props.formid == props.formno">
                 <button  @click.prevent="$emit('addmidForm')">+Add More</button>
             </div>
-        </div>
+        </div> -->
         
         <div class="form-element">
             <div class="fill-in btn my-1">
@@ -180,8 +180,8 @@ export default {
         }
 
         return { cargo, length, width, height, weight, quantity, clickedOutside, props, stacking, turnable, weighing, dimension,
-         inactive, setCargotype, getStacking, getTurnable, getWeighing, getDimension,
-          cargotypes, showList, arrowDown, arrowCounter, arrowUp, onEnter }
+                 inactive, setCargotype, getStacking, getTurnable, getWeighing, getDimension,
+                 cargotypes, showList, arrowDown, arrowCounter, arrowUp, onEnter }
     },
 }
 

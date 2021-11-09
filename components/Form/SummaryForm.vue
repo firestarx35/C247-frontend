@@ -4,23 +4,28 @@
         <div class="cargo-details-subcontainer-6">
             <div class="cargo-summary-element">
                 <strong><p>Total Quantity</p></strong>
-                <p v-for="(item, index) in summary" :key="index">{{item.TotalQuantity}}</p>
+                <p>{{summ.summary.quantity}}</p>
+                <!-- <p v-for="(item, index) in summ" :key="index">{{item.summary}}</p> -->
             </div>
             <div class="cargo-summary-element">
-                <p><strong>Total Volume </strong>({{dimensionSystem.vol}})</p>
-                <p v-for="(item, index) in summary" :key="index">{{item.TotalVolume}}</p>
+                <p><strong>Total Volume </strong>({{summ.units.vol}})</p>
+                <p>{{summ.summary.volume}}</p>
+                <!-- <p v-for="(item, index) in summ" :key="index">{{item.summary}}</p> -->
             </div>
             <div class="cargo-summary-element">
                 <p><strong>Total Weight </strong>(kg)</p>
-                <p v-for="(item, index) in summary" :key="index">{{item.TotalWeight}}</p>
+                <p>{{summ.summary.weight}}</p>
+                <!-- <p v-for="(item, index) in summ" :key="index">{{item.summary}}</p> -->
             </div>
             <div class="cargo-summary-element">
-                <p><strong>Density </strong>({{dimensionSystem.desi}})</p>
-                <p v-for="(item, index) in summary" :key="index">{{item.Density}}</p>
+                <p><strong>Density </strong>({{summ.units.densi}})</p>
+                <p>{{summ.summary.density}}</p>
+                <!-- <p v-for="(item, index) in summ" :key="index">{{item.summary}}</p> -->
             </div>
             <div class="cargo-summary-element">
                <p><strong>Chargeable Weight</strong></p>
-                <p v-for="(item, index) in summary" :key="index">NA</p>
+               <p>NA</p>
+                <!-- <p v-for="(item, index) in summ" :key="index">NA</p> -->
             </div>
         </div>
     </div>
@@ -28,20 +33,13 @@
 
 <script>
 import { computed } from 'vue';
-import { useStore } from 'vuex';
+import { summarisedData } from '../../ticketData'
 
 export default {
     setup() {
-        const store = useStore();
+        const summ = computed(function() { return summarisedData() })
 
-        const summary = computed(function() {
-            return store.getters['bookingdat/getformSummary']
-        })
-        const dimensionSystem = computed(function() { if (summary.value[0].dimension == true ) { return { vol: 'cm³', desi: 'cm³/kg'} }
-                                                        else { return { vol: 'inch³', desi: 'inch³/kg' } 
-                                                    }})
-
-        return { summary, dimensionSystem }
+        return { summ }
     },
 }
 </script>

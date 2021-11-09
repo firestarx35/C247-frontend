@@ -18,7 +18,8 @@ let backend_ends = { home:'',
                      get_profile: '/login/get_profile',
                      update_profile: '/login/update_profile',
                      user_data: '/login/user_data',
-                     }
+                     reset_password: '/reset_password',
+                    }
 
     
 function links(link) { 

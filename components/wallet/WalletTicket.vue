@@ -1,36 +1,32 @@
 <template>
-    <div class="saved-container">
-            <div class="saved-card">
-                <div class="cross-button" @click="$emit('remove-wallet', Data.flightid)"><span>&#10539;</span></div>
-                <div class="airports">
-                    <div>
-                        <p>{{Data.source_airport}}</p>
-                        <img :src="dots" alt="">
-                        <p>{{Data.destination_airport}}</p>
-                    </div>
-                </div>
-                <div class="airline">
-                    <img :src="airline[1]" alt="airline logo">
-                </div>
-                <div class="details">
-                    <div class="column-1">
-                        <div class="departure">
-                            <h1>{{Data.source_date}}</h1>
-                            <p>{{Data.source_airport_address}}</p>
-                        </div>
-                        <div class="arrival">
-                            <h1>{{Data.destination_date}}</h1>
-                            <p>{{Data.destination_airport_address}}</p>
-                        </div>
-                    </div>
-                    <div class="column-2">
-                        <p>Current Rate: INR {{Data.rate}}</p>
-                        <p>Chargable Weight: 100kg</p>
-                        <button class="btn" @click="CheckoutData">Book Now</button>
-                    </div>
-                </div>
-            </div>
+    <div class="saved-card">
+        <div class="cross-button" @click="$emit('remove-wallet', ticket_data.flightno)"><span>&#10539;</span></div>
+        <div class="flight-num">
+            <img :src="ticket_data.airline.logo" alt="">
+            <p>{{ticket_data.flightid}}</p>
         </div>
+        <div class="airports-data">
+                <div class="source">
+                    <h3>{{ticket_data.source_date.date}} {{ticket_data.source_date.time}}</h3>
+                    <h2>{{ticket_data.source.code}}</h2>
+                    <p>{{ticket_data.source.name}}</p>
+                    <p>{{ticket_data.source.address}}</p>
+                </div>
+                <img :src="aeroplane_logo" alt="">
+                <div class="destination">
+                    <h3>{{ticket_data.destination_date.date}} {{ticket_data.destination_date.time}}</h3>
+                    <h2>{{ticket_data.destination.code}}</h2>
+                    <p>{{ticket_data.destination.name}}</p>
+                    <p>{{ticket_data.destination.address}}</p>
+                </div>
+        </div>
+        <div class="cost-details">
+            <p>Current Cost   :  <span>{{ticket_data.amount.rate}}</span></p>
+            <p>Total Weight    :   <span>100 Kg</span></p>
+            <p>Type  :  <span>General Cargo</span></p>
+            <button class="btn" @click="CheckoutData">Book Now</button>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -38,6 +34,7 @@ import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { imgs } from '../../asset'
+import { detailedData } from '../../ticketData'
 
 export default {
     emits: ['remove-wallet'],
@@ -46,45 +43,26 @@ export default {
         const store = useStore();
         const router = useRouter();
 
-        const dots = imgs('Dots.svg')
+        const aeroplane_logo = imgs('AEROPLANE-LOGO.png')
 
-         const airline = computed(function() {
-            if (props.savedTicket[0] == 1) { return ['Spice jet', imgs('spice-jet-logo.png')]}
-            else if (props.savedTicket[0] == 2) { return ['Air India', imgs('Air-India-Express-logo.svg')]}
-            else if (props.savedTicket[0] == 3) { return ['Indigo', imgs('indigo-logo.png')]}
-            else if (props.savedTicket[0] == 4) { return ['Lufthansa', imgs('lufthansa-logo.png')]}
-            else if (props.savedTicket[0] == 5) { return ['Vistara', imgs('Vistara-logo.svg')]}
-            else if (props.savedTicket[0] == 6) { return ['DHL', imgs('DHL-Express-logo.png')]}
-            else if (props.savedTicket[0] == 7) { return ['Blue Dart', imgs('Blue-Dart-logo.png')]}
-            else if (props.savedTicket[0] == 8) { return ['Turkish Airways', imgs('turkish-airlines-logo.png')]}
-        })
-        
-        const Data = computed (function() {
-            return { source_airport: props.savedTicket[4],
-                    source_airport_address: 'Source Address',
-                    source_date: customDate(props.savedTicket[1]),
-                    flightid: props.savedTicket[2],
-                    destination_airport: props.savedTicket[5],
-                    destination_date: customDate(props.savedTicket[6]),
-                    destination_airport_address: 'Destination Address',
-                    rate: props.savedTicket[7]
-                }
-        })
+        const ticket_data = computed(function() { return detailedData(props.savedTicket) })
 
-         function customDate(dates) {
-            const newDate = new Date(dates)
-            const month = newDate.toLocaleString('default', { month: 'short' });
-            const dayName = newDate.toString().split(' ')[0];
-            const datetime = newDate.getDate() + ' '+ month.toUpperCase() + ' ' +  dayName.toUpperCase() + ' | '+ newDate.toLocaleTimeString([], { hour: '2-digit', minute:'2-digit'})
-            return  datetime 
-        }
         function CheckoutData() {
+            store.dispatch('bookingdat/clearMidForm')
+            if (props.savedTicket.length > 12) { 
+                const midform =  { id: 1, length: props.savedTicket[13], width: props.savedTicket[14], height: props.savedTicket[15], weight: props.savedTicket[17], quantity: props.savedTicket[16], type: props.savedTicket[19], stacking: props.savedTicket[20], weighing: props.savedTicket[18], turnable: props.savedTicket[21], dimension: props.savedTicket[12]}
+                store.dispatch('bookingdat/addmidformData', midform)
+                store.dispatch('bookingdat/addCheckout', props.savedTicket[2]);
+                router.push('/search/checkout')
+            } else {
+                store.dispatch('bookingdat/addCheckout', props.savedTicket[2]);
+                //Pop up MID FORM
+                router.push('/search/checkout')
+            }
             
-            store.dispatch('bookingdat/addCheckout', props.savedTicket[2]);
-            router.push('/search/checkout')
         }
         
-        return { dots, props, Data, airline, CheckoutData }
+        return {aeroplane_logo, ticket_data, CheckoutData }
     },
 }
 </script>
