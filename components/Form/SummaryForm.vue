@@ -4,22 +4,22 @@
         <div class="cargo-details-subcontainer-6">
             <div class="cargo-summary-element">
                 <strong><p>Total Quantity</p></strong>
-                <p>{{summ.summary.quantity}}</p>
+                <p>{{props.midformSummary[0].midform.quantity}}</p>
                 <!-- <p v-for="(item, index) in summ" :key="index">{{item.summary}}</p> -->
             </div>
             <div class="cargo-summary-element">
-                <p><strong>Total Volume </strong>({{summ.units.vol}})</p>
-                <p>{{summ.summary.volume}}</p>
+                <p><strong>Total Volume </strong>({{props.midformSummary[0].volume_unit}})</p>
+                <p>{{props.midformSummary[0].TotalVolume}}</p>
                 <!-- <p v-for="(item, index) in summ" :key="index">{{item.summary}}</p> -->
             </div>
             <div class="cargo-summary-element">
                 <p><strong>Total Weight </strong>(kg)</p>
-                <p>{{summ.summary.weight}}</p>
+                <p>{{props.midformSummary[0].TotalWeight}}</p>
                 <!-- <p v-for="(item, index) in summ" :key="index">{{item.summary}}</p> -->
             </div>
             <div class="cargo-summary-element">
-                <p><strong>Density </strong>({{summ.units.densi}})</p>
-                <p>{{summ.summary.density}}</p>
+                <p><strong>Density </strong>({{props.midformSummary[0].density_unit}})</p>
+                <p>{{props.midformSummary[0].Density}}</p>
                 <!-- <p v-for="(item, index) in summ" :key="index">{{item.summary}}</p> -->
             </div>
             <div class="cargo-summary-element">
@@ -32,14 +32,15 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-import { summarisedData } from '../../ticketData'
-
+import { computed } from '@vue/runtime-core'
 export default {
-    setup() {
-        const summ = computed(function() { return summarisedData() })
+    props: ['midformSummary'],
+    
+    setup(props) {
 
-        return { summ }
-    },
+        const comp = computed(function() { console.log(props); return null })
+
+    return { props } 
+}
 }
 </script>

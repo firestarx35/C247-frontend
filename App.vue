@@ -1,6 +1,8 @@
 <template>
     
-    <nav-bar></nav-bar>    
+    <nav-bar></nav-bar>   
+    <error-show></error-show>
+    <!-- <loading-screen></loading-screen>  -->
     <router-view v-slot="{ Component }">
         <transition
          enter-active-class="animate__animated animate__fadeInRight"
@@ -15,9 +17,11 @@
 <script>
 import "animate.css"
 import NavBar from './components/NavBar.vue'
+// import LoadingScreen from './components/LoadingScreen.vue'
 export default {
     components: {
         NavBar,
+        // LoadingScreen,
     },
   setup() {
     
@@ -28,7 +32,6 @@ export default {
 <style >
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&display=swap');
 
-
 /* Added styles */
 .active-list {
     background: #fff;
@@ -38,6 +41,13 @@ export default {
 
 /* For highlighting expanded airline card in airline listings page. */
 .active-card {
+  width: 390px;
+  height: 98px;
+  background: #fff;
+  border-bottom: 35px solid #ffcb00;
+  border-radius: 13px;
+  margin: 10px 0px 10px 15px;
+  cursor: pointer;
   box-shadow: 0px 0px 4px 3px rgba(0, 0, 0, 0.3);
 }
 /* Added ends */
@@ -50,8 +60,8 @@ export default {
 html {
   font-family: "Montserrat", sans-serif;
   font-size: 14px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  /* overflow-y: auto; */
+  /* overflow-x: hidden; */
   font-weight: 500;
 }
 
@@ -92,6 +102,7 @@ nav {
 .nav-links {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .current-page {
@@ -134,6 +145,7 @@ nav {
 .step-container {
   max-width: 1400px;
   height: 90vh;
+  min-height: 50rem;
   width: 95%;
   display: flex;
   flex-direction: row;
@@ -155,6 +167,10 @@ nav {
   height: auto;
 }
 
+.step-img .twin-image-container {
+  position: relative;
+}
+
 .step-img img {
   object-position: center center;
   height: auto;
@@ -163,6 +179,22 @@ nav {
   object-fit: contain;
   border-radius: 20px;
   margin: auto;
+}
+
+.step-img .twin-image-container img:last-child {
+  width: 13rem;
+  z-index: 1000;
+  position: absolute;
+  top: 18%;
+  right: 40%;
+  animation: fade-in 2s 1 forwards;
+  animation-delay: 1s;
+  /* opacity: 0; */
+}
+
+@keyframe fade-in {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
 }
 
 .step-content {
@@ -174,9 +206,76 @@ nav {
   /* border: solid 2px red; */
 }
 
+.step-content h1 {
+  font-weight: 500;
+  word-spacing: 4px;
+}
+
 .step-content p {
   margin-top: 1.5rem;
+  word-spacing: 3px;
 }
+
+.call-to-action-window {
+  width: 100%;
+  padding: 5%;
+  height: 20rem;
+  display: grid;
+  grid-template-columns: 3fr 7fr;
+  background-color: #ffcb00;
+}
+
+.call-to-action-window-button {
+  width: 100%;
+  height: auto;
+  padding: 1rem;
+  border-radius: 1rem;
+  display: flex;
+  /* border: solid 2px red; */
+  justify-content: center;
+  align-items: center;
+  /* background-color: #ffcb00; */
+}
+
+.call-to-action-window-button button {
+  border: none;
+  outline: none;
+  margin: 1rem;
+  padding: 1.5rem 3rem;
+  font-size: large;
+  font-family: 'montserrat';
+  font-weight: 500;
+  border-radius: 1rem;
+  cursor: pointer;
+  background: f;
+  white-space: nowrap;
+  box-shadow: 0px 0px 5px 3px rgb(0 0 0 / 15%);
+}
+
+.call-to-action-window-button button:hover {
+  box-shadow: 0px 0px 8px 3px rgb(0 0 0 / 35%);
+}
+
+.call-to-action-window-button .loading_container  img {
+  transform: translateY(-18px);
+}
+
+.signup-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.signup-text p{
+  color: #000;
+  text-align: center;
+}
+.signup-text h1{
+  font-weight: 500;
+}
+
 
 /* ====================Clouds Start=================== */
 .hero-bg {
@@ -285,13 +384,14 @@ nav {
 .profile-container {
   border-radius: 2rem;
   background: #fff;
-  padding: 1rem 4rem 1rem 4rem;
+  padding: 1rem 0;
   margin-bottom: 1rem;
   margin-left: auto;
   margin-right: auto;
   box-shadow: 0px 0px 5px 4px rgba(92, 92, 92, 0.315);
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  justify-items: center;
 }
 .profile-container-2 {
   border-radius: 2rem;
@@ -603,6 +703,23 @@ footer .nav-links a:hover {
 @media screen and (max-width: 1000px) {
   .step-container {
     height: 80vw;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .step-container {
+    flex-direction: column;
+  }
+
+  .step-img {
+    width: 90%;
+  }
+
+  .step-content {
+    width: auto;
+    height: fit-content;
+    text-align: center;
   }
 }
 
@@ -666,9 +783,16 @@ footer .nav-links a:hover {
   }
   .profile-container {
     justify-content: space-evenly;
+    padding: 0px;
   }
   .achievement-tag {
     border-radius: 1.6rem;
+  }
+}
+
+@media screen and (max-width: 880px ) {
+  .profile-container {
+    grid-template-columns: 1fr 1fr;
   }
 }
 /* ==================================Media Query Ends for profile page============================= */
@@ -724,6 +848,7 @@ footer .nav-links a:hover {
   width: 10rem;
   border-radius: 2rem;
   border: none;
+  box-shadow: 0px 0px 5px 4px rgb(92 92 92 / 32%);
 }
 
 @media screen and (max-width: 1400px) {
@@ -754,7 +879,7 @@ footer .nav-links a:hover {
   display: grid;
   grid-template-columns: repeat(6, 10rem);
   justify-content: space-between;
-  background-color: #cacaca8f;
+  background-color: #ffffff8f;
   padding: 0.3rem 2rem;
   border-radius: 2rem;
   /* border: 3px solid #ffcc009d; */
@@ -1205,7 +1330,6 @@ footer .nav-links a:hover {
   padding-bottom: 0.2rem;
 }
 .card-expansion-container .cross-button {
-  visibility: hidden;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -1215,8 +1339,7 @@ footer .nav-links a:hover {
   right: 1rem;
   width: 1.5rem;
   height: 1.5rem;
-  border-radius: 100%;
-  align-items: center;
+  border-radius: 50%;
 }
 
 .airline-breakdown {
@@ -1275,6 +1398,11 @@ footer .nav-links a:hover {
   margin-top: 1rem;
 }
 
+.btn {
+  box-shadow: 3px 3px 4px 0 rgba(0, 0, 0, 0.25),
+    -8px -8px 12px 0 rgba(255, 255, 255, 0.3);
+}
+
 .btn:hover {
   box-shadow: 5px 3px 10px rgba(0, 0, 0, 0.5);
 }
@@ -1319,7 +1447,9 @@ section > h2 {
   padding: 1rem;
   box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
   margin-bottom: 1rem;
-  overflow: auto;
+  /* overflow: auto; */
+  position: relative;
+
 }
 
 .saved-card:hover {
@@ -1330,9 +1460,20 @@ section > h2 {
   display: flex;
   flex-direction: column;
   text-align: center;
-  /* border: solid 2px red; */
   height: 100%;
-  padding: 1rem 0;
+  padding: 0 0 1rem 0;
+}
+
+.saved-card > p {
+  font-size: .8rem;
+  border-radius: 0 0 .5rem .5rem;
+  position: absolute;
+  left: 50%;
+  top: 0rem;
+  padding: .1rem 1rem;
+  background-color: #ffcc0027;
+  color: #caa200;
+  transform: translate(-50%)
 }
 
 .saved-card .flight-num img {
@@ -1364,13 +1505,27 @@ section > h2 {
   justify-content: space-between;
 }
 
+.saved-card .airports-data .flight-time {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.saved-card .airports-data .flight-time p {
+  padding: .2rem;
+  border-radius: 1rem;
+  background-color: #00000015;
+  color: #000;
+  font-size: 90%;
+}
+
 .saved-card .airports-data .source h3,
 .saved-card .airports-data .destination h3 {
-    padding-bottom: .5rem;
-    font-size: 1.7rem;
-    width: 100%;
-    color: #555555;
-    font-weight: 500;
+  padding-bottom: .5rem;
+  font-size: 1.7rem;
+  width: 100%;
+  color: #555555;
+  font-weight: 500;
 }
 
 .saved-card .airports-data .source h2,
@@ -1381,8 +1536,8 @@ section > h2 {
 } 
 
 .saved-card .airports-data img {
-  width: 150px;
-  height: 30px;
+  width: 130px;
+  height: 27px;
   margin: auto;
 }
 
@@ -1437,38 +1592,25 @@ section > h2 {
 
 /* ===Cross Button=== */
 .saved-card .cross-button span {
-  font-size: 0.8rem;
+  font-size: 1rem;
   width: 100%;
   text-align: center;
   padding-bottom: 0.2rem;
   /* border: 1px solid red; */
 }
 .saved-card .cross-button {
-  display: flex;
-  visibility: hidden;
+  display: none;
   cursor: pointer;
   background-color: #ffcc00;
   position:absolute;
   top: 0.4rem;
   left: 0.4rem;
   width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 100%;
-  align-items: center;
-  justify-content: center;
+  border-radius: 50%;
 }
 .saved-card:hover .cross-button {
-  visibility: visible;
-  /* background: red; */
+  display: flex;
 }
-
-
-/* ==================================Saved Card Ends============================= */
-
-
-
-/* ==================================Media Queries============================= */
-
 
 @media screen and (max-width: 1200px) {
   
@@ -1476,17 +1618,40 @@ section > h2 {
       font-size: 1.5rem;
       margin: 0;
   }
+  .saved-card .flight-num p {
+    font-size: 1.2rem;
+  }
+
+  .saved-card .flight-num img {
+    width: 7rem;
+  }
+
+  .airports-data .source h3, 
+  .airports-data .destination h3, 
+  .airports-data .source h2, 
+  .airports-data .destination h2{
+    font-size: 1.4rem !important;
+  }
+
+  .saved-card .airports-data img {
+    width: 105px;
+    height: 21px;
+  }
+
   .details .column-1 .departure h1,
   .details .column-1 .arrival h1 {
       font-size: 1.3rem;
   }
+
   .details .column-1 .departure p,
   .details .column-1 .arrival p {
       font-size: 1rem;
   }
+
   .column-2 p {
       font-size: 1rem;
   }
+
   .column-2 button {
       width: 10rem;
   }
@@ -1509,9 +1674,173 @@ section > h2 {
       width: 50%;
       align-self: flex-start;
   }
+
+  .saved-card .airports-data img {
+    width: 75px;
+    height: 15px;
+  }
+
+  .saved-card .airports-data p {
+    font-size: .8rem;
+  }
+
+  .saved-card .cost-details h3,
+  .saved-card .cost-details p {
+    font-size: .8rem;
+  }
+
+  .saved-card #expandable-button > button {
+    font-size: .8rem;
+  }
+
+  .airports-data .source h3, 
+  .airports-data .destination h3, 
+  .airports-data .source h2, 
+  .airports-data .destination h2{
+    font-size: 1.2rem !important;
+  }
 }
 
-/* ======================================Cart Section Ends=================================== */
+/* ==================================Saved Card Ends============================= */
+
+
+
+/* =========================================================Expanding Button Starts============================ */
+
+
+#expandable-button {
+  width: auto;
+  border-radius: 1rem;
+  display: flex;
+  /* animation: expand 1s ease forwards; */
+  position: relative;
+  z-index: 2;
+  justify-content: center;
+}
+
+#book-update {
+  z-index: 100;
+  position: absolute;
+  width: 95%;
+  background-color: #ffcb00;
+  border-radius: 2rem;
+  font-size: 90%;
+  text-align: center;
+  /* animation: hide 1s ease forwards; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#book-update span {
+  align-content: center;
+}
+
+#now {
+  z-index: 10;
+  position: absolute;
+  width: 95%;
+  background-color: #ffcb00;
+  border-radius: 1rem;
+  outline: none;
+  top: 0px;
+  margin: 4px;
+}
+
+#update {
+  outline:  none;
+  background-color: #ffcb00;
+  position: absolute;
+  width: 95%;
+  border-radius: 1rem;
+  outline: none;
+  /* animation: godown 1s ease forwards; */
+  margin: 4px;
+}
+/* 
+@keyframes expand {
+  0% {
+    height: 2.2rem;
+  }
+
+  100% {
+      height: 5.3rem;
+  }
+}
+
+@keyframes godown {
+  0% {
+    
+  }
+
+  100% {
+      transform: translateY(2.5rem);
+  }
+}
+
+@keyframes hide {
+  0% {
+      opacity: 1;
+      z-index: 0;
+  }
+
+  10% {
+      opacity: 0;
+      display: none;
+  }
+
+  100% {
+      opacity: 0;
+      display: none;
+      z-index: 0;
+  }
+}
+ */
+/* =========================================================Expanding Button Ends============================ */
+
+/* =========================================================Cart page cargo details overlay Starts============================ */
+
+.overlay {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  right: 0;
+  /* background-color: rgb(0,0,0); */
+  background-color: rgba(0,0,0, 0.7);
+  overflow-x: hidden;
+  transition: 0.5s;
+  backdrop-filter: blur(3px);
+}
+
+.overlay-content {
+  position: relative;
+  /* top: 25%; */
+  width: 100%;
+  text-align: center;
+  padding: 5%;
+}
+
+.overlay .closebtn {
+  position: absolute;
+  padding: 0;
+  height: auto;
+  margin: 0;
+  background: #ffcb00;
+  top: 20px;
+  font-size: 2rem;
+  color: #000;
+  text-decoration: none;
+}
+
+/* =========================================================Cart page cargo details overlay Ends============================ */
+
+/* =======================================================Cart Section Ends================================================= */
+
+
+
+
 
 /* ======================================Booking History Starts=================================== */
 
@@ -1572,6 +1901,8 @@ section > h2 {
 }
 .expansion-container:hover .saved-card {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .search-bar {
   height: 2.2rem;
@@ -1653,7 +1984,7 @@ section > h2 {
   padding: 2rem;
   margin: 1rem auto;
   border-radius: 2rem;
-  box-shadow: 0px 0px 5px 4px rgba(92, 92, 92, 0.315);
+  box-shadow: 0px 0px 5px 4px rgb(92 92 92 / 32%);
 }
 
 .booking-container h1 {
@@ -1696,6 +2027,7 @@ section > h2 {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
+  text-align: center;
 }
 
 .icons img {
@@ -1732,6 +2064,7 @@ section > h2 {
   padding: 0 1rem 2rem 1rem;
   background: #d8d8d850;
   border-radius: 1rem;
+  min-width: 25%;
 }
 .cost-section > form > h5 {
   margin: 1rem;
@@ -1739,16 +2072,19 @@ section > h2 {
 }
 .confirmation-text {
   width: 100%;
-  background: #ffcb00;
+  /* background: #ffcb00; */
   text-align: center;
   border-radius: 2rem;
 }
-.confirmation-text h1 {
-  color: black;
-  font-weight: 400;
-  white-space: nowrap;
-  padding: 0 2rem;
+
+.request-made {
+  background: #bdbdbd !important;
 }
+
+.request-confirmed {
+  background: #ffcb00;
+}
+
 
 .page-save-icon {
   display: flex;
@@ -1777,7 +2113,7 @@ form label {
 }
 
 form input {
-  height: 2rem;
+  /* height: 2rem; */
   width: 100%;
   outline: none;
   border: none;
@@ -1817,6 +2153,25 @@ form input {
   border-radius: 5rem;
 }
 
+@media screen and (max-width:1000px) {
+  .icons img {
+    width: 7rem;
+  }
+
+  .booking-container{
+    display: flex;
+    flex-direction: column;
+  }
+
+  #booking {
+    padding: 1rem
+  }
+
+  .cargo-grid{
+    font-size: .8rem;
+  }
+}
+
 /* =======================================CARGO DETAILS AND LOGIN SIGNUP Starts============================= */
 
 .cargo-details-section {
@@ -1833,6 +2188,7 @@ form input {
   margin-left: auto;
   margin-right: auto;
   box-shadow: 0px 0px 5px 4px rgba(92, 92, 92, 0.315);
+  height: auto;
 }
 .cargo-details-container h1 {
   margin-bottom: 1rem;
@@ -1874,6 +2230,10 @@ form input {
   justify-self: flex-start;
   font-size: 12px;
   align-content: center;
+}
+.fill-in h4 span {
+  font-size: 120%;
+  color: red;
 }
 .searchable {
   width: 60%;
@@ -1939,7 +2299,68 @@ form input {
   padding-bottom: 1rem;
 }
 
+@media screen and (max-width: 1000px) {
+  .cargo-details-subcontainer-6 p {
+    font-size: .8rem;
+  }
+}
+
 /* ====================================Summary Ends=============================== */
+/* ====================================Request Starts=============================== */
+#forwarder-request {
+  height: auto;
+}
+#message {
+  background-color: #fff;
+  /* border: 3px solid #ffcb00; */
+  border-radius: 2rem;
+  /* padding: .7rem 1rem; */
+  display: grid;
+  grid-template-columns: 01fr 1fr 1fr 1fr;
+  height: auto;
+}
+
+#message-to-forwarder {
+  background-color: rgb(235, 235, 235);
+  grid-column: 1 / span 3;
+  grid-row: 2 span 3;
+  height: auto;
+}
+
+#consignment-files {
+  grid-column: 4 / span 1;
+  grid-row: 2;
+  height: auto;
+}
+
+#submit-request {
+  grid-column: 4 / span 1;
+  grid-row: 3 
+}
+
+@media screen and (max-width: 1000px) {
+  html {
+    font-size: 80%;
+  }
+
+  #message-to-forwarder {
+    grid-column: 1 / span 4;
+    grid-row: 2 span 3;
+    height: auto;
+  }
+
+  #consignment-files {
+    grid-column: 1 / span 2;
+    grid-row: 3;
+    height: auto;
+  }
+
+  #submit-request {
+    grid-column: 4 / span 1;
+    grid-row: 4 
+  }
+}
+/* ====================================Request Ends=============================== */
 
 /* ==================================Calender Starts=================================*/
 
@@ -2045,7 +2466,7 @@ icon from the input field. ================================== */
 
 /* =========================================================Login Starts============================================================ */
 
-#login-error {
+#error-message {
   position: fixed;
   top: 0;
   width: 100%;
@@ -2055,19 +2476,31 @@ icon from the input field. ================================== */
   z-index: 1000;
 }
 
-#login-error:hover p {
-  visibility: visible;
-  display: inline;
-  transition: 1s;
+#error-message p {
+  padding: 1rem 7rem;
+  border-radius: 2rem;
+  background-color: #ff260085;
+  width: fit-content;
+  color: #fff;
 }
-#login-error p {
+
+#positive-message {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 3rem;
+  z-index: 1000;
+}
+
+#positive-message p {
   padding: 1rem 7rem;
   border-radius: 2rem;
   background-color: #ffcb00;
   width: fit-content;
-  display: none;
-  visibility: hidden;
 }
+
 .home-logo {
   width: 100%;
   margin: 4rem auto;
@@ -2163,11 +2596,11 @@ icon from the input field. ================================== */
   max-width: 15rem;
   background: #dfdfdf;
   border: 1px white solid;
-  top: 2.8rem;
+  top: 3.3rem;
   border-radius: 1rem;
   padding: 0.6rem;
   z-index: 100;
-  right: 1.5rem;
+  right: 0rem;
   /* display: none; */
   z-index: 1000;
 }
@@ -2175,6 +2608,7 @@ icon from the input field. ================================== */
   list-style: none;
   border-bottom: #ffffff2a 2px solid;
   transition: 0.25s;
+  cursor: pointer;
 }
 .dropdown-profile h3:hover {
   background: #fff;
@@ -2205,7 +2639,6 @@ ul li h3 {
   padding: 0 1rem 1rem 1rem;
   z-index: 100;
   left: 0;
-  display: none;
   z-index: 1000;
 }
 .dropdown-search li {
@@ -2278,11 +2711,14 @@ ul li h3 {
     border-radius: 1.4rem;
     padding: 3px;
     height: fit-content;
+    align-items: flex-start;
   }
 
   .fill-in h4 {
     white-space: nowrap;
     padding-left: 1rem;
+    padding-bottom: .4rem;
+    margin: 0
   }
 
   .searchable {
@@ -2330,6 +2766,7 @@ ul li h3 {
   background-color: #ffcc0027;
   border-radius: 2rem;
   color: #caa200;
+  text-align: center;
 }
 
 #logout h3 {
@@ -2344,6 +2781,13 @@ ul li h3 {
   border: none;
   font-family: "montserrat";
   font-weight: 500;
+}
+
+@media screen and (max-width: 1000px) {
+
+  #logout h3:first-of-type {
+    padding: 1rem 4rem;
+  }
 }
 /* =======================================Logout Page Ends============================= */
 
@@ -2392,6 +2836,7 @@ ul li h3 {
 
 .cost-grid div h4 {
   font-weight: 400;
+  padding-right: 1.5rem;
 }
 
 .booking-form h5 {
@@ -2420,6 +2865,11 @@ ul li h3 {
   background: #d8d8d850;
   border-radius: 1rem;
 }
+
+.cost-section h3 {
+  padding-bottom: 1rem;
+}
+
 .cost-section > form > h5 {
   margin: 1rem;
   text-align: center;
@@ -2434,7 +2884,6 @@ ul li h3 {
   color: black;
   font-weight: 400;
   white-space: nowrap;
-  padding: 0 2rem;
 }
 
 .page-save-icon {
@@ -2501,6 +2950,14 @@ ul li h3 {
 @media print {
   .page-save-icon {
     display: none;
+  }
+
+  .flight-grid .icons img {
+    width: 8rem;
+  }
+
+  .cargo-summary {
+    font-size: 80%;
   }
 
   .nav-container .logo {
@@ -2574,5 +3031,6 @@ ul li h3 {
 /* ==================== Media Queries  =================== */
 
 /* ====================================================Booking Page Ends============================= */
+
 
 </style>

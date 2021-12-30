@@ -53,8 +53,11 @@ export default {
             else if (val == 'greenest') { greenestFilter.value = true }
             store.dispatch('ticketsdat/filterChange', val);
         }
+        function walletMessage(msg, type) {
+            console.log("Message from Multiple airlines: ", msg, type)
+        }
 
-        return { Airlines, changeFilter, earliestFilter, earliestActiveClass, cheapestFilter, samedayFilter, bestFilter, greenestFilter, confirmBooking  }
+        return { Airlines, changeFilter, earliestFilter, earliestActiveClass, cheapestFilter, samedayFilter, bestFilter, greenestFilter, confirmBooking, walletMessage  }
     },
 }
 </script>

@@ -8,3 +8,14 @@
         </div>
     </section>
 </template>
+
+<script>
+import { onMounted } from 'vue'
+import { useStore } from 'vuex';
+export default {
+    setup() {
+        const store = useStore();
+        onMounted( function() { store.dispatch('userdat/unauthenticateUser') })
+    },
+}
+</script>

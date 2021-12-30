@@ -7,26 +7,16 @@
             <div class="fill-in my-1">
                 
                 <h4>From</h4>
-                <div class="searchable">
-                <input type="text" placeholder="Source" v-model.trim="source" @input="onChange('source')" @keyup.down="arrowDown" @keyup.up="arrowUp" @keyup.enter.prevent="onEnter('source')">
-                    <ul class="dropdown-search" v-show="sourceOpen">
-                        <li :class="{ 'active-list': i === arrowCounter }" v-for="(result, i) in results.slice(0,9)" :key="i" @click="setResult(i, 'source'); console.log('Trigerred click 1')" ><h3>{{result.airportCode}},   {{ result.airportName}},   {{result.cityName}}</h3></li>
-                    </ul>
-                </div>   
-            
+               <airport-form station="source" @send-result="setSource"></airport-form>
+
             </div>
         </div>
         <div class="form-element">
             <div class="fill-in my-1">
                 
-                <h4>To</h4>                        
-                <div class="searchable">
-                <input type="text" placeholder="Destination" v-model.trim="destination" @input="onChange('destination')" @keyup.down="arrowDown" @keyup.up="arrowUp" @keyup.enter.prevent="onEnter('destination')">
-                    <ul class="dropdown-search" v-show="destinationOpen">
-                        <li :class="{ 'active-list': i === arrowCounter }" v-for="(result, i) in results.slice(0,9)" :key="i" @click="setResult(i,'destination')" ><h3>{{result.airportCode}},   {{ result.airportName}},   {{result.cityName}}</h3></li>
-                    </ul>
-                </div> 
-
+                <h4>To</h4>
+                <airport-form station="destination" @send-result="setDestination"></airport-form>                        
+                
             </div>
         </div>
         <div class="form-element">
@@ -41,8 +31,8 @@
         </div>
         <div class="form-element">
             <div class="fill-in btn my-1">
-                
-                <button @click.prevent="fetchTickets(); $emit('get-tickets')">Search Flights</button>
+        
+                <button @click.prevent="fetchTickets">Search Flights</button>
             
             </div>
         </div>
@@ -51,77 +41,46 @@
 </template>
          
 <script>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useStore } from 'vuex';
+import AirportForm from './AirportForm.vue'
             
 export default {
+    components: {
+        AirportForm
+    },
         emits:['get-tickets'],
         
-        setup() {
-        const store = useStore();
+        setup(_, { emit }) {
+        const store = useStore();   
 
-        const airports = computed(function() { return store.getters['bookingdat/getAirports'] }) ;
-        const arrowCounter = ref(-1);
-        const results = ref([]);
-        const sourceOpen = ref(null);
-        const destinationOpen = ref(null);
- 
-        const source = ref('');
-        const destination = ref('');
+        const source = ref(null);
+        const destination = ref(null);
         const dates = ref('');
 
-        function getResults(val) {
-            var dat = null
-            if (val === 'source') { dat = source.value.toLowerCase() }
-            else { dat = destination.value.toLowerCase() }
-            if (dat !== '') { results.value = airports.value.filter(function airportCheck(value) {
-                var code = value.airportCode.toLowerCase().indexOf(dat)
-                var name = value.airportName.toLowerCase().indexOf(dat)
-                var city = value.cityName.toLowerCase().indexOf(dat)
-                if ((name == 0) || (code == 0) || (city == 0)) { return true; }
-                    })
-                }
+        function setSource(val) {
+            source.value = val
         }
-
-        function onChange(val) {
-            if (store.getters['bookingdat/getAirports']) {
-                if (val === 'source') { getResults(val); sourceOpen.value = true; destinationOpen.value = false; }
-                else { getResults(val); sourceOpen.value = false; destinationOpen.value = true;}
-            } else { store.dispatch('bookingdat/fetchAirports') }  
+        function setDestination(val) {
+            destination.value = val
         }
-
-        function arrowDown() {
-            if (arrowCounter.value < results.value.length) { arrowCounter.value = arrowCounter.value + 1;} 
-            }
-
-        function arrowUp() {
-            if (arrowCounter.value > 0) { arrowCounter.value = arrowCounter.value - 1;} 
-            }
-
-        function onEnter(val) {
-            if (val === 'source') { source.value = results.value[arrowCounter.value].airportCode; sourceOpen.value = false; }
-            else { destination.value = results.value[arrowCounter.value].airportCode; destinationOpen.value = false}
-            arrowCounter.value = -1;
-        }
-
-        function setResult(i, val) {
-            if (val === 'source') {
-                console.log('Trigerred click')
-                source.value = results.value[i].airportCode;
-                sourceOpen.value = false
-            } else {
-                 destination.value = results.value[i].airportCode
-                 destinationOpen.value = false
-                  }
-        }
-       
+      
         function fetchTickets() {
-            if ( (source.value != '') && (destination.value != '') && (dates.value.value !='') ) {
-                const routedata = { from: source.value.toUpperCase(), to: destination.value.toUpperCase(), date: dates.value.value };
-                store.dispatch('bookingdat/addtopform', routedata);
-            }}
+            if ( (source.value != null) && (destination.value != null) && (dates.value.value !='') ) {
+                if (source.value != destination.value) {
+                    const routedata = { source: source.value.toUpperCase(), destination: destination.value.toUpperCase(), date: dates.value.value }
+                    store.dispatch('bookingdat/addtopform', routedata)
+                    store.dispatch('ticketsdat/fetchTickets')
+                    emit('get-tickets')
+                } else {
+                    store.dispatch('userdat/displayError', {message: 'Source and Destination must be different', type: false})
+                }
+            } else {
+                console.log("Complete the form") //ErrorShow.vue
+            }
+        }
 
-        return { sourceOpen, source, destinationOpen, destination, dates, onEnter, onChange, arrowDown, arrowCounter, arrowUp, setResult, getResults, fetchTickets, results};
+        return { fetchTickets, setSource, setDestination, dates };
         }, 
 }
 </script>

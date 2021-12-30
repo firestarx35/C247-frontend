@@ -2,8 +2,8 @@
 <div>
     <section class="cargo-details-section">
         <top-form @get-tickets="$emit('get-tickets')"></top-form>
-        <mid-form v-for="i in formcounter" :key="i" :formid="i" :formno="formcounter" @addmid-form="addmidForm" > </mid-form>
-        <summary-form v-if="summaryAvailable"></summary-form>
+        <mid-form v-for="i in formcounter" :key="i" formname="Search Quotes" :formid="i" :formno="formcounter" @midform-button="searchQuotes" @addmid-form="addmidForm" > </mid-form>
+        <summary-form v-if="!!midformSummary" :midformSummary="midformSummary"></summary-form>
     </section>
  </div>
 </template>
@@ -24,19 +24,30 @@ export default {
   },
   emits: ['get-tickets'],
 
-    setup() { 
+    setup(_, {emit}) { 
         const store = useStore();
+        
+       
 
         const formcounter = ref(1);
-        onBeforeMount(function() { store.dispatch('bookingdat/clearMidForm') })
 
-        const summaryAvailable = computed(function() { if (store.getters['bookingdat/getformSummary']) { return true }
-                                                     else { return false }
-                                                     })
+        onBeforeMount(function() { store.dispatch('bookingdat/clearMidForm') })
+        
+        const midformSummary = computed(function() { return store.getters['bookingdat/getformSummary'] })
+        
         function addmidForm() {
             if (store.getters['bookingdat/getmidform'].length == formcounter.value) { formcounter.value += 1; }  ///checks if previous form has been filled
         }
+        function searchQuotes() {
+          if (store.getters['bookingdat/getformSummary']) {
+            emit('get-tickets')
+          } else {
+            console.log("Complete the form")
+          }
+        }
 
-        return { formcounter, addmidForm, summaryAvailable };}
+        return { formcounter, addmidForm, midformSummary, searchQuotes }
+        
+        }
 }
 </script>

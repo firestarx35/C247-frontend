@@ -127,7 +127,7 @@ export default {
                                                                                                     else { return false }}
                                                     else { return false }})
                                                     
-        onBeforeMount(function () { if (store.getters['userdat/getProfileStatus']) { console.log("Profile data is already present", "| Code from Profile.vue"); }
+        onBeforeMount(function () { if (store.getters['userdat/getProfileStatus']) { }
                                     else { store.dispatch('userdat/fetchProfile') }
                                     })
 

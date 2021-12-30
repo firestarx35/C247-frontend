@@ -62,25 +62,25 @@
                         <h4>1</h4>
                     </div>
                     <div>
-                        <h4>{{cargo_summary.summary.quantity}}</h4>
+                        <h4>{{cargo_summary.midform.quantity}}</h4>
                     </div>
                     <div>
-                        <h4>{{cargo_summary.summary.weight}} kg</h4>
+                        <h4>{{cargo_summary.TotalWeight}} kg</h4>
                     </div>
                     <div>
-                        <h4>{{cargo_summary.summary.volume}} {{cargo_summary.units.vol}}</h4>
+                        <h4>{{cargo_summary.TotalVolume}} {{cargo_summary.volume_unit}}</h4>
                     </div>
                     <div>
-                        <h4>{{cargo_summary.units.type}}</h4>
+                        <h4>{{cargo_summary.midform.type}}</h4>
                     </div>
                     <div>
-                        <h4>{{cargo_summary.units.secured}}</h4>
+                        <h4>true</h4>
                     </div>
                     <div>
-                        <h4>{{cargo_summary.units.stackable}}</h4>
+                        <h4>{{cargo_summary.midform.stacking}}</h4>
                     </div>
                     <div>
-                        <h4>{{cargo_summary.units.turnable}}</h4>
+                        <h4>{{cargo_summary.midform.turnable}}</h4>
                     </div>
                 </div>
 
@@ -97,7 +97,7 @@
 
             <div class="cost-grid" id="air-fright-cost">
                 <div><h4>Air Freight Cost</h4></div>
-                <div><h4>${{booking_data.amount.airline_cost}}</h4></div>
+                <div><h4>{{booking_data.amount.airline_cost}}</h4></div>
             </div>
             <div class="cost-grid" id="additional-cost">
                 <div><h4>Additional Cost</h4></div>
@@ -165,7 +165,7 @@ import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 
 import { imgs } from '../asset'
-import { detailedData, summarisedData } from '../ticketData'
+import { detailedData } from '../ticketData'
 
 export default {
    
@@ -179,9 +179,9 @@ export default {
        const booking_status = ref(false)
        
        const booking_data = computed(function() { return detailedData(store.getters['bookingdat/getCheckoutData']) })
-       const cargo_summary = computed(function() { return summarisedData() })
-      
 
+       const cargo_summary = computed(function() { console.log(store.getters['bookingdat/getformSummary']); return store.getters['bookingdat/getformSummary'][0] })
+      
        function bookNow() { booking_status.value = true;}
 
     return { AEROPLANE_LOGO, Airline_logo, save_icon, printer_icon, booking_status, bookNow, booking_data, cargo_summary }

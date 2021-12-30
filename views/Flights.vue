@@ -5,7 +5,8 @@
       <search-form @get-tickets="getTickets" v-if="!areticketAvailable"></search-form>
       <summary-box v-else @edit-form="editForm"></summary-box>
   </keep-alive>
-      <multiple-airlines v-if="areticketAvailable" @edit-form="editForm"></multiple-airlines>
+      <!-- <button @click="downloadQuotes">Download quotes</button> -->
+      <multiple-airlines v-if="areticketAvailable" @edit-form="editForm" ></multiple-airlines>
 </section>
     
 </template>
@@ -46,9 +47,14 @@ export default {
     }
     function editForm() {
       showTicket.value = false;
-
+      store.dispatch('ticketsdat/clearTickets')
     }
-    return { areticketAvailable, getTickets, editForm }
+
+    function downloadQuotes() {
+      console.log("Excel data from Flights.vue")
+    }
+
+    return { areticketAvailable, getTickets, editForm, downloadQuotes }
   },
 }
 </script>

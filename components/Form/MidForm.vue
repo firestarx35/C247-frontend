@@ -47,7 +47,7 @@
                 <div class="fill-in my-1">
                     <h4>Length</h4>                        
                     <div class="searchable">
-                        <input type="number" placeholder="Length" ref="length" @blur="clickedOutside">                            
+                        <input type="number" placeholder="Length" ref="length" @input="clickedOutside">                            
                     </div>
                 </div>
             </div>
@@ -55,7 +55,7 @@
                 <div class="fill-in my-1">
                     <h4>Width</h4>                        
                     <div class="searchable">
-                        <input type="number" placeholder="Width" ref="width" @blur="clickedOutside">                            
+                        <input type="number" placeholder="Width" ref="width" @input="clickedOutside">                            
                     </div>
                 </div>
             </div>
@@ -63,7 +63,7 @@
                 <div class="fill-in my-1">
                     <h4>Height</h4>
                     <div class="searchable">
-                        <input type="number" placeholder="Height" ref="height" @blur="clickedOutside">
+                        <input type="number" placeholder="Height" ref="height" @input="clickedOutside">
                     </div>
                 </div>
             </div>
@@ -75,7 +75,7 @@
                 <div class="fill-in my-1">
                     <h4>Quantity</h4>
                     <div class="searchable">
-                        <input type="number" placeholder="Quantity" ref="quantity" @blur="clickedOutside">
+                        <input type="number" placeholder="Quantity" ref="quantity" @input="clickedOutside">
                     </div>
                 </div>
             </div>
@@ -83,7 +83,7 @@
                 <div class="fill-in my-1">
                     <h4>Weight</h4>
                     <div class="searchable">
-                        <input type="number" placeholder="Weight" ref="weight" @blur="clickedOutside">
+                        <input type="number" placeholder="Weight" ref="weight" @input="clickedOutside">
                     </div>
                 </div>
             </div>
@@ -97,7 +97,7 @@
         
         <div class="form-element">
             <div class="fill-in btn my-1">
-                <button type="submit">Search Quotes</button>
+                <button @click="$emit('midform-button')">{{props.formname}}</button>
             </div>
         </div>
         </div>
@@ -107,14 +107,10 @@
 <script>
 import { ref } from 'vue';
 import { useStore } from 'vuex';
-import SlideButton from '../SlideButton.vue'
 
 export default {
-    props: ['formid', 'formno'],
-    emits: ['addmidForm'],
-    components: {
-        SlideButton
-    },
+    props: ['formid', 'formno', 'formname'],
+    emits: ['addmidForm', 'search-quotes'],
     
     setup(props) {
         
@@ -122,6 +118,9 @@ export default {
 
         const cargotypes = ['General Cargo', 'Temparature Controlled', 'Live Animals', 'Human Remains', 'Dangerous Goods', 'High Value']
         const arrowCounter = ref(-1);
+        const showList = ref(false);
+        const inactive = null
+        
         const length = ref('');
         const width = ref('');
         const height = ref('');
@@ -132,8 +131,7 @@ export default {
         const weighing = ref(true);
         const dimension = ref(true)
         const cargo = ref(null);
-        const showList = ref(false);
-        const inactive = null
+       
 
         function setCargotype(val) {
             cargo.value = val
@@ -141,15 +139,20 @@ export default {
             arrowCounter.value = -1;
         }
         function arrowDown() {
-            if (arrowCounter.value < cargotypes.length -1) { arrowCounter.value = arrowCounter.value + 1; } 
+            if (arrowCounter.value < cargotypes.length -1) { 
+                arrowCounter.value = arrowCounter.value + 1; 
+                cargo.value = cargotypes[arrowCounter.value]
+                } 
             }
 
         function arrowUp() {
-            if (arrowCounter.value > 0) { arrowCounter.value = arrowCounter.value - 1;} 
+            if (arrowCounter.value > 0) { 
+                arrowCounter.value = arrowCounter.value - 1
+                cargo.value = cargotypes[arrowCounter.value]
+                } 
             }
 
         function onEnter() {
-            cargo.value = cargotypes[arrowCounter.value]
             showList.value = false
             arrowCounter.value = -1;
         }
@@ -174,7 +177,9 @@ export default {
 
         function clickedOutside() {
             if ((height.value.value !== '') && (length.value.value!== '') && (width.value.value !== '')&& (weight.value.value !== '') && (quantity.value.value !== '')) {
-                const middledata = { id: props.formid, length: length.value.value, width: width.value.value, height: height.value.value, weight: weight.value.value, quantity: quantity.value.value, type: cargo.value, stacking: stacking.value, weighing: weighing.value, turnable: turnable.value, dimension: dimension.value };
+                const middledata = { id: props.formid, length: length.value.value, width: width.value.value, height: height.value.value, 
+                                        weight: weight.value.value, quantity: quantity.value.value, type: cargo.value, stacking: stacking.value, 
+                                        weighing: weighing.value, turnable: turnable.value, dimension: dimension.value };
                 store.dispatch('bookingdat/addmidformData', middledata);
             }
         }

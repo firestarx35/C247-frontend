@@ -73,16 +73,16 @@ export default {
         function addtoWallet() {
             const existing_tickets = store.getters['userdat/getWallet']
             if (store.getters['userdat/getWalletStatus']) {
-                if (existing_tickets != undefined && existing_tickets.some(function(element) { return element[2] == props.ticket[2] })) {
-                //Alert("Ticket already added to wallet", warning)
+                if (existing_tickets != undefined && existing_tickets.some(function(element) { return element[12] == props.ticket[12] })) {
+                store.dispatch('userdat/displayError', { message: "Ticket already exists!", type: false })
             } else { 
-                store.dispatch('userdat/updateWallet', [props.ticket[2], true])
-                //Alert("Ticket added to wallet", "Success")
+                store.dispatch('userdat/updateWallet', [props.ticket[12], true])
+                store.dispatch('userdat/displayError', { message: "Ticket successfully frozen!", type: true })
              }
             }
         }
         function CheckoutData() {
-            store.dispatch('bookingdat/addCheckout', props.ticket[2]);
+            store.dispatch('bookingdat/addCheckout', props.ticket[12]);
             router.push('/search/checkout')
         }
 

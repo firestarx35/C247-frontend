@@ -25,7 +25,7 @@ export default {
         const TransactionStatus = computed(function() { if (store.getters['userdat/getTransactions'].length > 0) { return true }
                                                         else { return false }})
 
-        onBeforeMount(function () { if (store.getters['userdat/getTransactionsStatus']) { console.log("Transaction data is already present", "| Code from Transactions.vue"); }
+        onBeforeMount(function () { if (store.getters['userdat/getTransactionsStatus']) {  }
                                     else { store.dispatch('userdat/fetchTransactions') }
                                     }
                     )

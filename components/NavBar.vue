@@ -1,16 +1,17 @@
 <template>
     <nav v-if="isAuth">
         <div class="nav-container">
-            <div class="logo"><a :href="home_link"><img :src="CARGO247_Dark_BG_Logo" alt=""></a></div>
+            <div class="logo"><a :href="home_link"><img :src="CARGO247_Dark_BG_Logo" alt="Cargo247 Logo"></a></div>
             <div class="nav-links">
                 <router-link to="/search"> Search</router-link>
                 <router-link to="/transactions">Bookings</router-link>
                 <router-link to="/wallet"> Wallet</router-link>
                 <router-link to="/requests">Requests</router-link>
-                <a @click="displayProfile"><span class="profile-tag">{{user}}</span></a>
-                <ul class="dropdown-profile" v-if="isProfile">
+                <a @click="displayProfile" v-click-outside="closeProfile"><span class="profile-tag">{{user}}</span></a>
+                <ul class="dropdown-profile" v-if="isProfile" >
                     <li @click="showProfile"><h3>My Profile</h3></li>
                     <li @click="logOut"><h3>Sign Out</h3></li>
+                    <li @click="downloadData"><h3>Download File</h3></li>
                 </ul>
             </div>
         </div>
@@ -21,6 +22,7 @@ import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router'
 import { links, imgs } from '../asset'
+import { quoteAggregator } from '../excelCreator'
 
 export default {
     setup() {
@@ -36,17 +38,26 @@ export default {
                                             else { return 'Hi'} })
 
         const isAuth = computed(function() { return store.getters['userdat/getAuthStatus'] })
-        function displayProfile() { isProfile.value = !isProfile.value ; console.log(isProfile.value)}
+        function displayProfile() { isProfile.value = !isProfile.value }
 
         function showProfile() {
+            isProfile.value = false
             router.push('/profile')
         }
         function logOut() {
+            isProfile.value = false
             router.replace('/logout')
-            store.dispatch('userdat/unauthenticateUser')
         }
+        function closeProfile() {
+            isProfile.value = false
+        }
+        function downloadData() {
+            isProfile.value = false
+            quoteAggregator()
+        }
+
       
-      return { CARGO247_Dark_BG_Logo, home_link, isProfile, isAuth, user, displayProfile, showProfile, logOut  }
+      return { CARGO247_Dark_BG_Logo, home_link, isProfile, isAuth, user, displayProfile, showProfile, logOut, closeProfile, downloadData }
     },
 }
 </script>

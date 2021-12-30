@@ -1,5 +1,5 @@
 <template>
-    <div class="card-container" v-bind:class="styleclass.activestyle" @click="$emit('ticket-expand')">
+    <div v-bind:class="[ticketstate, styleclass.activestyle]" @click="expandTicket" v-click-outside="shrinkTicket">
         <div class="card-grid">
             <div class="card-grid-rows-top">
                 <div class="card-flex-box text-left">{{ticketdata.source_date.date}}</div>
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 import { imgs } from '../../asset'
 import { ticketData } from '../../ticketData'
@@ -40,21 +40,32 @@ export default {
     props: ['ticket'],
     emits: ['ticket-expand'],
 
-    setup(props) {
+    setup(props, { emit }) {
         const store = useStore();
         const aeroplane_logo = imgs('AEROPLANE-LOGO.png')
+        const ticketstate = ref('card-container')
 
         const ticketdata = computed(function() { return ticketData(props.ticket)})
         
         const styleclass = computed(function() { 
-            const ndate = new Date(props.ticket[1]);
-            if (store.getters['ticketsdat/getCheapest'] == props.ticket[2]) { return {activestyle: 'cheapest-card'}}
-            else if (store.getters['ticketsdat/getEarliest'] == props.ticket[2]) { return { activestyle: 'earliest-card'}}
+            const ndate = new Date(props.ticket[4]);
+            if (store.getters['ticketsdat/getCheapest'] == props.ticket[12]) { return {activestyle: 'cheapest-card'}}
+            else if (store.getters['ticketsdat/getEarliest'] == props.ticket[12]) { return { activestyle: 'earliest-card'}}
             else if (store.getters['bookingdat/getTopform'].date == ndate.toISOString().split('T')[0]) { return {activestyle:'priority-card'}}
             else { return {activestyle: null}}
         })
-   
-        return {aeroplane_logo, ticketdata, styleclass }
+
+        function expandTicket() {
+            emit('ticket-expand')
+            ticketstate.value = 'active-card'
+        }
+        function shrinkTicket() {
+            if (ticketstate.value == 'active-card') {
+                ticketstate.value = 'card-container'
+            }
+        }
+
+        return {aeroplane_logo, expandTicket, shrinkTicket, ticketdata, styleclass, ticketstate }
     }  
 }
 </script>

@@ -6,19 +6,17 @@ const userdat = {
     namespaced: true,
     
     state() {
-        return { isAuthenticated: false, token: null, 
-            ProfileData: null, isprofileAvailable: false,
-            Transactions: [], TransactionAvailable: false, 
-            WalletTickets: [], WalletfetchStatus: false, 
-            Userdata:{ interestedroutes: [], specialTickets:[]}, DataSent: false, }
-    },
+        return { isAuthenticated: false, token: null, ProfileData: null, isprofileAvailable: false,
+                Transactions: null, TransactionAvailable: false, WalletTickets: null, WalletfetchStatus: false,
+                errorData: { message: null, type: null, status: null }, Userdata:{ interestedroutes: null, specialTickets: null}, DataSent: false }
+            },
 
     mutations: {
         authenticateUser(state, payload) {
             state.token = payload;
             state.isAuthenticated = true;
         },
-        unauthenticateUser(state, payload) {
+        unauthenticateUser(state) {
             state.ProfileData = null; 
             state.isprofileAvailable = false
             state.token = null;
@@ -26,10 +24,12 @@ const userdat = {
             localStorage.removeItem('c247-token');
         },
         addRoutes(state, payload) {
+            state.Userdata.interestedroutes = []
             state.Userdata.interestedroutes.push([payload.from, payload.to, payload.date]);
             state.DataSent = false;
         },
         addSpecialTickets(state, payload) {
+            state.Userdata.specialTickets = []
             state.Userdata.specialTickets.push(payload) ///this payload is ticket id Flight id
         },
         fetchTransactions(state, payload) {
@@ -40,7 +40,6 @@ const userdat = {
         fetchWallet(state, payload) {
             state.WalletTickets = []
             state.WalletTickets = payload
-            console.log(state.WalletTickets)
             state.WalletfetchStatus = true
         },
         fetchProfile(state, payload) {
@@ -51,13 +50,15 @@ const userdat = {
         updateWallet(state, payload) {
             state.WalletTickets = []
             state.WalletTickets = payload
-            console.log(state.WalletTickets)
             state.WalletfetchStatus = true; 
         },
         updateProfile(state, payload) {
             state.ProfileData = []
             state.ProfileData = payload
             state.isprofileAvailable = true 
+        },
+        displayError(state, payload) {
+            state.errorData = payload
         },
         postUserData(state) {
             state.DataSent = true; 
@@ -102,20 +103,24 @@ const userdat = {
                 let midform = context.rootState.bookingdat.cargodetails
                 if (midform[midform.length -1]) {
                     midform = midform[midform.length - 1]
-                    const data = [payload[0], midform.dimension, midform.length, midform.width, midform.height, midform.quantity, midform.weight, midform.weighing, midform.type, midform.stacking, midform.turnable]
-                    context.state.WalletfetchStatus = false
-                    postData(links('update_wallet'), { data: data }, context.state.token)
+                    const data = { flight_id: payload[0], status: true, consignment_metric: midform.dimension, 
+                                    consignment_length: midform.length, consignment_width: midform.width, 
+                                    consignment_height: midform.height, consignment_quantity: midform.quantity, 
+                                    consignment_weight: midform.weight, consignment_weighing: midform.weighing, 
+                                    consignment_type: midform.type, stackable: midform.stacking, turnable: midform.turnable
+                    }  
+                    postData(links('update_wallet'), data, context.state.token)
                     .then((dat) => { 
                         context.commit('updateWallet', dat)
                     })
                 } else { 
-                    postData(links('update_wallet'), { data: [payload[0], null] }, context.state.token)
+                    postData(links('update_wallet'), { flight_id: payload[0], status: true }, context.state.token)
                     .then((dat) => { 
                         context.commit('updateWallet', dat)
                     })
                 }
             } else {
-                postData(links('update_wallet'), { data: [payload[0]] }, context.state.token)
+                postData(links('update_wallet'), { flight_id: payload[0], status: false }, context.state.token)
                 .then((dat) => { 
                     context.commit('updateWallet', dat)
                 })
@@ -127,10 +132,15 @@ const userdat = {
                 context.commit('updateProfile', dat)
             })
         },
+        displayError(context, payload) {
+            context.commit('displayError', { message: payload.message, type: payload.type, status: true })
+            setTimeout(function() { 
+                context.commit('displayError', { message: null, type: null, status: false })}, 2000)
+        },
         async postUserData(context) {
             postData(links('user_data'), { data: context.state.Userdata }, context.state.token)
             .then((response) => { 
-                console.log(response);      ///Take decision to how to handndle it
+                console.log(response);      ///Take decision on how to handle it
                 context.commit('postUserData')
               })
         },
@@ -142,6 +152,9 @@ const userdat = {
         },
         getAuthStatus(state) {
             return state.isAuthenticated
+        },
+        getErrorMessage(state) {
+            return state.errorData
         },
         getWalletStatus(state) {
             return state.WalletfetchStatus
@@ -176,8 +189,8 @@ async function fetchData(url, token) {
                         else { console.log("fetch failed")} 
 }
 
-async function postData(url = '', data = {}, token) {
-    const response = await fetch(url, { method: 'POST', mode: 'cors',headers: {'Content-Type': 'application/json', Authorization: "Bearer" + " " + token },
+async function postData(url = '', data, token) {
+    const response = await fetch(url, { method: 'POST', mode: 'cors', headers: {'Content-Type': 'application/json', Authorization: "Bearer" + " " + token },
                                         body: JSON.stringify(data)} );
                     if (response.ok) { return response.json() }
                     else if (response.status >= 400) { router.replace('/'); userdat.actions.unauthenticateUser() }
