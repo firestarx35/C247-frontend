@@ -1437,7 +1437,7 @@ section > h2 {
 
 /* ===Cross Button=== */
 .saved-card .cross-button span {
-  font-size: 1rem;
+  font-size: 0.8rem;
   width: 100%;
   text-align: center;
   padding-bottom: 0.2rem;
@@ -1452,12 +1452,14 @@ section > h2 {
   top: 0.4rem;
   left: 0.4rem;
   width: 1.5rem;
-  border-radius: 50%;
+  height: 1.5rem;
+  border-radius: 100%;
   align-items: center;
+  justify-content: center;
 }
 .saved-card:hover .cross-button {
   visibility: visible;
-  background: red;
+  /* background: red; */
 }
 
 
