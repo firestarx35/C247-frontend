@@ -1,5 +1,5 @@
 <template>
-    <div class="cargo-details-container">
+    <div class="cargo-details-container" v-for="i in formcounter" :key="i">
         <h1>Cargo Details</h1>
         <form  class="form-grid">
             <div class="form-element" >
@@ -90,8 +90,8 @@
         </form>
         <div class="form-grid">
         <!-- <div class="form-element">
-            <div class="fill-in btn my-1" v-if=" props.formid == props.formno">
-                <button  @click.prevent="$emit('addmidForm')">+Add More</button>
+            <div class="fill-in btn my-1" v-if="key == formcounter">
+                <button  @click.prevent="addmidForm">+Add More</button>
             </div>
         </div> -->
         
@@ -102,36 +102,72 @@
         </div>
         </div>
 </div>
+<!-- Summary starts -->
+
+<div class="cargo-details-container" v-if="!!Summary" >
+    <h1>Cargo Summary</h1>
+    <div class="cargo-details-subcontainer-6">
+        <div class="cargo-summary-element">
+            <p><strong>Total Quantity</strong></p>
+            <p>{{Summary[0].midform.quantity}}</p>
+            <!-- <p v-for="(item, index) in summ" :key="index">{{item.summary}}</p> -->
+        </div>
+        <div class="cargo-summary-element">
+            <p><strong>Total Volume </strong>({{Summary[0].volume_unit}})</p>
+            <p>{{Summary[0].TotalVolume}}</p>
+            <!-- <p v-for="(item, index) in summ" :key="index">{{item.summary}}</p> -->
+        </div>
+        <div class="cargo-summary-element">
+            <p><strong>Total Weight </strong>(kg)</p>
+            <p>{{Summary[0].TotalWeight}}</p>
+            <!-- <p v-for="(item, index) in summ" :key="index">{{item.summary}}</p> -->
+        </div>
+        <div class="cargo-summary-element">
+            <p><strong>Density </strong>({{Summary[0].density_unit}})</p>
+            <p>{{Summary[0].Density}}</p>
+            <!-- <p v-for="(item, index) in summ" :key="index">{{item.summary}}</p> -->
+        </div>
+        <div class="cargo-summary-element">
+            <p><strong>Chargeable Weight</strong> (kg)</p>
+            <p>{{Summary[0].Chargeable}}</p>
+            <!-- <p v-for="(item, index) in summ" :key="index">NA</p> -->
+        </div>
+    </div>
+</div>
+
 </template>
 
 <script>
-import { ref } from 'vue';
-import { useStore } from 'vuex';
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
-    props: ['formid', 'formno', 'formname'],
-    emits: ['addmidForm', 'search-quotes'],
+    props: ['formname'],
+    emits: ['midform-button'],
     
     setup(props) {
-        
-        const store = useStore();
+        const store = useStore()
+        const formcounter = ref(1)
 
-        const cargotypes = ['General Cargo', 'Temparature Controlled', 'Live Animals', 'Human Remains', 'Dangerous Goods', 'High Value']
-        const arrowCounter = ref(-1);
-        const showList = ref(false);
+        const cargotypes = ['General Cargo', 'Temperature Controlled']
+        const arrowCounter = ref(-1)
+        const showList = ref(false)
         const inactive = null
         
-        const length = ref('');
-        const width = ref('');
-        const height = ref('');
-        const weight = ref(0);
-        const quantity = ref(1);
-        const stacking = ref(true);
-        const turnable = ref(true);
-        const weighing = ref(true);
+        const length = ref('')
+        const width = ref('')
+        const height = ref('')
+        const weight = ref(0)
+        const quantity = ref(1)
+        const stacking = ref(true)
+        const turnable = ref(true)
+        const weighing = ref(true)
         const dimension = ref(true)
-        const cargo = ref(null);
-       
+        const cargo = ref(null)
+
+        const Summary = computed(function() { 
+          return store.getters['bookingdat/getformSummary'] 
+        })
 
         function setCargotype(val) {
             cargo.value = val
@@ -151,7 +187,6 @@ export default {
                 cargo.value = cargotypes[arrowCounter.value]
                 } 
             }
-
         function onEnter() {
             showList.value = false
             arrowCounter.value = -1;
@@ -173,7 +208,6 @@ export default {
             dimension.value = val;
             clickedOutside()
         }
-        
 
         function clickedOutside() {
             if ((height.value.value !== '') && (length.value.value!== '') && (width.value.value !== '')&& (weight.value.value !== '') && (quantity.value.value !== '')) {
@@ -183,10 +217,15 @@ export default {
                 store.dispatch('bookingdat/addmidformData', middledata);
             }
         }
+        function addmidForm() {
+            if (store.getters['bookingdat/getmidform'].length == formcounter.value) {
+                formcounter.value += 1
+            }  //  ///checks if previous form has been filled
+        }
 
         return { cargo, length, width, height, weight, quantity, clickedOutside, props, stacking, turnable, weighing, dimension,
-                 inactive, setCargotype, getStacking, getTurnable, getWeighing, getDimension,
-                 cargotypes, showList, arrowDown, arrowCounter, arrowUp, onEnter }
+                 inactive, setCargotype, getStacking, getTurnable, getWeighing, getDimension, formcounter,
+                 cargotypes, showList, arrowDown, arrowCounter, arrowUp, onEnter, addmidForm, Summary }
     },
 }
 

@@ -24,7 +24,7 @@
                 
                 <h4>Date</h4>                        
                 <div class="searchable">
-                    <input type="date" placeholder="dd/mm/yyyy"  ref="dates">
+                    <input type="date" placeholder="dd/mm/yyyy"  ref="dates" @input="addData">
                 </div>
 
             </div>
@@ -64,23 +64,30 @@ export default {
         function setDestination(val) {
             destination.value = val
         }
-      
-        function fetchTickets() {
+
+        function addData() {
             if ( (source.value != null) && (destination.value != null) && (dates.value.value !='') ) {
                 if (source.value != destination.value) {
                     const routedata = { source: source.value.toUpperCase(), destination: destination.value.toUpperCase(), date: dates.value.value }
                     store.dispatch('bookingdat/addtopform', routedata)
-                    store.dispatch('ticketsdat/fetchTickets')
-                    emit('get-tickets')
+                    return true
                 } else {
                     store.dispatch('userdat/displayError', {message: 'Source and Destination must be different', type: false})
+                    return false
                 }
             } else {
                 console.log("Complete the form") //ErrorShow.vue
+                return false
+            }
+        }
+      
+        function fetchTickets() {
+            if (addData()) {
+                emit('get-tickets')
             }
         }
 
-        return { fetchTickets, setSource, setDestination, dates };
+        return { fetchTickets, setSource, setDestination, dates, addData };
         }, 
 }
 </script>

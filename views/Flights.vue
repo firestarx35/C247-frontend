@@ -3,39 +3,53 @@
 <section>
   <keep-alive>  
       <search-form @get-tickets="getTickets" v-if="!areticketAvailable"></search-form>
-      <summary-box v-else @edit-form="editForm"></summary-box>
   </keep-alive>
-      <!-- <button @click="downloadQuotes">Download quotes</button> -->
-      <multiple-airlines v-if="areticketAvailable" @edit-form="editForm" ></multiple-airlines>
+      <summary-box v-if="areticketAvailable" @edit-form="editForm" @cargo-details="inputCargo"></summary-box>
+      
+      <div id="cargo-details-overlay" class="overlay" v-if="showForm"> 
+        <div class="cross-button closebtn" @click="closeForm"><img :src="cross_button" alt="close"></div>
+        <div class="overlay-content">
+            <div>
+                <midform-summary formname="Book Now" @midform-button="updateCargo"> </midform-summary>
+            </div>
+        </div>
+      </div> 
+
 </section>
     
 </template>
 
 <script>
 import SearchForm from '@/components/Form/SearchForm.vue'                 // @ is an alias to /src
-import MultipleAirlines from '@/components/tickets/MultipleAirlines.vue'
 import SummaryBox from '../components/tickets/SummaryBox.vue'
-
-import { ref, computed, onBeforeMount } from 'vue';
-import { useStore } from 'vuex';
+import MidformSummary from '../components/Form/MidformSummary.vue'
+import { ref, computed, onBeforeMount } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { imgs } from '../asset'
 
 export default {
   components: {
     SearchForm,
-    MultipleAirlines,
-    SummaryBox
+    SummaryBox,
+    MidformSummary
   },
 
   setup() {
-    const store = useStore();
+    const store = useStore()
+    const router = useRouter()
+    const cross_button = imgs('cross_button.svg')
 
-    const showTicket = ref(false);
+    const showTicket = ref(false)
+    const showForm = ref(false)
+
 
     onBeforeMount(function() {
-      if (!store.getters['bookingdat/getAirportstatus']) { store.dispatch('bookingdat/fetchAirports'); }
-      if (!store.getters['userdat/getWalletStatus']) { store.dispatch('userdat/fetchWallet'); }
-      if (!store.getters['userdat/getProfileStatus']) { store.dispatch('userdat/fetchProfile'); }
-      if (!store.getters['userdat/getTransactionsStatus']) { store.dispatch('userdat/fetchTransactions'); }
+      if (!store.getters['bookingdat/getAirportstatus']) { store.dispatch('bookingdat/fetchAirports')}
+      if (!!store.getters['userdat/getWallet']) { store.dispatch('userdat/fetchWallet') }
+      if (!store.getters['userdat/getProfileStatus']) { store.dispatch('userdat/fetchProfile') }
+      if (!!store.getters['userdat/getTransactions']) { store.dispatch('userdat/fetchTransactions') }
+      if (!store.getters['bookingdat/getAirlinestatus']) { store.dispatch('bookingdat/fetchAirlines')}
     })
 
     const areticketAvailable = computed(function() {
@@ -43,18 +57,32 @@ export default {
     })
 
     function getTickets() {
-      showTicket.value = true;
+      store.dispatch('ticketsdat/fetchTickets')
+      showTicket.value = true
     }
     function editForm() {
-      showTicket.value = false;
+      showTicket.value = false
       store.dispatch('ticketsdat/clearTickets')
     }
 
-    function downloadQuotes() {
-      console.log("Excel data from Flights.vue")
+    function inputCargo() {
+      showForm.value = true
     }
 
-    return { areticketAvailable, getTickets, editForm, downloadQuotes }
+    function closeForm() {
+      showForm.value = false    
+    }
+
+    function updateCargo() {
+      if (store.getters['bookingdat/getMidForm']) {
+        closeForm()
+        router.push('/search/checkout')
+      } else {
+        store.dispatch('userdat/displayError', { message: "Fill the form completely!", type: false })
+      }
+    }
+
+    return { areticketAvailable, cross_button, getTickets, editForm, showForm, inputCargo, closeForm, updateCargo }
   },
 }
 </script>

@@ -1,52 +1,49 @@
 <template>
 <div>
     <section class="cargo-details-section">
-        <top-form @get-tickets="$emit('get-tickets')"></top-form>
-        <mid-form v-for="i in formcounter" :key="i" formname="Search Quotes" :formid="i" :formno="formcounter" @midform-button="searchQuotes" @addmid-form="addmidForm" > </mid-form>
-        <summary-form v-if="!!midformSummary" :midformSummary="midformSummary"></summary-form>
+        <top-form @get-tickets="getTickets"></top-form>
+        <midform-summary formname="Book" @midform-button="searchQuotes"></midform-summary>
     </section>
  </div>
 </template>
 
 <script>
-import TopForm from './TopForm.vue';
-import MidForm from './MidForm.vue';
-import SummaryForm from './SummaryForm.vue';
-
-import { computed, ref, onBeforeMount } from 'vue';
-import { useStore } from 'vuex';
+import TopForm from './TopForm.vue'
+import MidformSummary from './MidformSummary.vue'
+import { onBeforeMount } from 'vue';
+import { useStore } from 'vuex'
 
 export default {
   components: {
     TopForm,
-    MidForm,
-    SummaryForm
+    MidformSummary,
   },
   emits: ['get-tickets'],
 
     setup(_, {emit}) { 
-        const store = useStore();
-        
-       
+        const store = useStore()
+      
+        onBeforeMount(function() { 
+          store.dispatch('bookingdat/clearMidForm') 
+        })
 
-        const formcounter = ref(1);
-
-        onBeforeMount(function() { store.dispatch('bookingdat/clearMidForm') })
-        
-        const midformSummary = computed(function() { return store.getters['bookingdat/getformSummary'] })
-        
-        function addmidForm() {
-            if (store.getters['bookingdat/getmidform'].length == formcounter.value) { formcounter.value += 1; }  ///checks if previous form has been filled
+        function getTickets() {
+          emit('get-tickets')
         }
+
         function searchQuotes() {
-          if (store.getters['bookingdat/getformSummary']) {
-            emit('get-tickets')
+          if (store.getters['bookingdat/getTopform']) {
+            if (store.getters['bookingdat/getformSummary']) {
+              getTickets()
+            } else {
+              store.dispatch('userdat/displayError', { message: "Cargo details required!", type: false }) 
+            }
           } else {
-            console.log("Complete the form")
+            store.dispatch('userdat/displayError', { message: "Flight details required!", type: false }) 
           }
         }
 
-        return { formcounter, addmidForm, midformSummary, searchQuotes }
+        return { getTickets, searchQuotes }
         
         }
 }

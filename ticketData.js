@@ -1,20 +1,15 @@
 import store from './store/index'
 import { imgs } from './asset'
 
+
 function airportData(iata) {
     const airport = store.getters['bookingdat/getAirports'].find(element => element.airportCode == iata)
     return { code: iata, name: airport.airportName, address: airport.cityName }
 }
 
 function airlineData(airline_id) {
-    if (airline_id == 1) { return { name: 'Spice jet', logo: imgs('spice-jet-logo.png')} }
-    else if (airline_id == 2) { return { name: 'Air India', logo: imgs('Air-India-Express-logo.svg')} }
-    else if (airline_id == 3) { return { name: 'Indigo', logo: imgs('indigo-logo.png')} }
-    else if (airline_id == 4) { return { name: 'Lufthansa', logo: imgs('lufthansa-logo.png')} }
-    else if (airline_id == 5) { return { name: 'Vistara', logo: imgs('Vistara-logo.svg')} }
-    else if (airline_id == 6) { return { name: 'DHL', logo: imgs('DHL-Express-logo.png')} }
-    else if (airline_id == 7) { return { name: 'Blue Dart', logo: imgs('Blue-Dart-logo.png')} }
-    else if (airline_id == 8) { return { name: 'Turkish Airways', logo: imgs('turkish-airlines-logo.png')} }
+    const airline = store.getters['bookingdat/getAirlines'].find(element => element.number == airline_id)
+    return { name: airline.name, logo: imgs(airline.logo), tail: imgs(airline.tail), iatacode: airline.code }
 }
 
 function customDate1(date) {
@@ -35,55 +30,50 @@ function customDate2(date) {
             }
 }
 
-function currency(type) {
-    if (type == 'in') { return '₹'}
-    else { return '$' }
+function currency() {
+    var region ='in'
+    if (region == 'in') { return 'INR '}
+    else { return 'USD' }
 }
 
 function charges(ticket) {
-    const weight = store.getters['bookingdat/getWeight']
-    if ( weight != null ) { 
-        const airline_cost = weight*ticket; 
-        const gst = Math.round(airline_cost*0.18);
-        return { available: true, rate: currency('in') + ticket + '/kg', airline_cost: currency('in') + airline_cost, gst: currency('in') + gst +' @18% ', Total: currency('in') + (airline_cost + gst + 120 + 5), fuel_surcharge: currency('in') + 120, cargo247_charge: currency('in')+ 5 } ////To be replaced by airline data
+    const chargeable_weight = store.getters['bookingdat/getWeight']
+    if (chargeable_weight != null) { 
+        const airline_cost = chargeable_weight*ticket
+        return { available: true, rate: currency() + ticket + ' kg', airline_cost: currency() + airline_cost, surcharge: currency() + (airline_cost*0.02).toFixed(2) + ' @ 2%', total: currency() + (airline_cost*1.02).toFixed(1) } ////To be replaced by airline data
     } else { 
-        return { available: false, rate: currency('in') + ticket + '/kg', Total: 'Cargo details required' } 
+        return { available: false, rate: currency() + ticket + '/kg' } 
     }
 }
 
-function walletCargo(ticket) {
-    if (ticket[12]) {
-        return { weight: ticket[17]+' kg', type: ticket[19] }
-    } else { return { weight: 'NA', type: 'NA'}}
+function duration(time) {
+    let hrs = Math.trunc(time/3600)
+    if (hrs != 0) {
+        return hrs + ' hrs '+ (time%3600)/60 + ' min'
+    } else {
+        return (time%3600)/60 + ' min'
+    }
 }
 
-function duration(arrival, departure) {
-    const minutes = ((new Date(arrival) -  new Date(departure))/60000);
-    const hours = Math.floor(minutes/60);
-    const remainingminutes = minutes%60;
-    return  hours + ':'+ remainingminutes
-}
-
-function detailedData(ticket) {
-
+function ExpansionData(ticket) {
         return { 
             airline: airlineData(ticket[0]),
             
             source: airportData(ticket[7]),
-            source_date: customDate1(ticket[4]),
+            source_date: customDate2(ticket[4]),
             
             flightid: ticket[3],
             flightno: ticket[12],
             
             destination: airportData(ticket[8]),
-            destination_date: customDate1(ticket[5]),          
+            destination_date: customDate2(ticket[5]),          
         
             amount: charges(ticket[2]),
-            duration: duration(ticket[5], ticket[4])
+            duration: duration(parseInt(ticket[1]))
         }  
 }
 
-function ticketData(ticket) {
+function sortedData(ticket) {
     return {
         source_code: ticket[7],
         source_date: customDate2(ticket[4]),
@@ -91,28 +81,96 @@ function ticketData(ticket) {
         destination_code: ticket[8],
         destination_date: customDate2(ticket[5]),          
         
-        amount: 'Rate:' + currency('in') + ticket[2] + '/kg',
-        duration: duration(ticket[5], ticket[4])
+        amount: charges(ticket[2]),
+        duration: duration(parseInt(ticket[1]))
     }
 }
 
-function walletData(ticket) {
+function unsortedData(ticket) {
     return {
         airline: airlineData(ticket[0]),
+        
+        source_code: ticket[7],
+        source_date: customDate2(ticket[4]),
+                
+        destination_code: ticket[8],
+        destination_date: customDate2(ticket[5]),          
+        
+        amount: charges(ticket[2]),
+        duration: duration(parseInt(ticket[1]))
+    }
+
+}
+
+function walletData(ticket) {
+    if (ticket[15] != null) {
+        return {
+            airline: airlineData(ticket[0]),
+                
+            source: airportData(ticket[7]),
+            source_date: customDate1(ticket[4]),
             
-        source: airportData(ticket[7]),
-        source_date: customDate1(ticket[4]),
+            flightid: ticket[3],
+            flightno: ticket[12],
+            
+            destination: airportData(ticket[8]),
+            destination_date: customDate1(ticket[5]),
+            
+            cargodetails: { chargeable_weight: ticket[17]+' kg', type: ticket[21] },
         
-        flightid: ticket[3],
-        flightno: ticket[12],
+            rate: currency() + ticket[2]* ticket[17],
+
+            duration: duration(parseInt(ticket[1])),
+
+            available: true
+        }
+    } else {
+        return {
+            airline: airlineData(ticket[0]),
+                
+            source: airportData(ticket[7]),
+            source_date: customDate1(ticket[4]),
+            
+            flightid: ticket[3],
+            flightno: ticket[12],
+            
+            destination: airportData(ticket[8]),
+            destination_date: customDate1(ticket[5]),
+            
+            cargodetails: { chargeable_weight: '--', type: '--' },
         
-        destination: airportData(ticket[8]),
-        destination_date: customDate1(ticket[5]),
+            rate: currency() + ticket[2] + ' /kg',
+
+            duration: duration(parseInt(ticket[1])),
+
+            available: false
+        }
+    }
+}
+
+function transactionData(transaction) {
+    return {
+        airline: airlineData(transaction[4]),
+
+        transaction_no: transaction[1],
+        awb: transaction[2],
         
-        cargodetails: walletCargo(ticket),
-    
-        rate: currency('in') + ticket[2] + '/kg',
-        duration: duration(ticket[5], ticket[4]),
+        source: airportData(transaction[6]),
+        source_date: customDate2(transaction[7]),
+            
+        flightid: transaction[3],
+        flightno: transaction[5],
+            
+        destination: airportData(transaction[8]),
+        destination_date: customDate2(transaction[9]),
+
+        rate: currency() + transaction[18],
+
+        cargo: { metric: transaction[11], weight: transaction[12], length: transaction[13], 
+            width: transaction[14], height: transaction[15], quantity: transaction[16], 
+            cargo_type: transaction[19], stackable: transaction[20], turnable: transaction[21]
+        },
+        status: transaction[22]
     }
 }
 
@@ -122,4 +180,4 @@ function quoteData(ticket) {
             new Date(ticket[4]).toLocaleTimeString(), new Date(ticket[4]).toLocaleDateString(),
             ticket[5] ]
 }
-export { airlineData, ticketData, detailedData, walletData, quoteData };
+export { airportData, airlineData, sortedData, unsortedData, ExpansionData, walletData, transactionData, quoteData, customDate1 }

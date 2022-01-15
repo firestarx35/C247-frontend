@@ -4,7 +4,7 @@
             <div class="logo"><a :href="home_link"><img :src="CARGO247_Dark_BG_Logo" alt="Cargo247 Logo"></a></div>
             <div class="nav-links">
                 <router-link to="/search"> Search</router-link>
-                <router-link to="/transactions">Bookings</router-link>
+                <router-link to="/bookings">Bookings</router-link>
                 <router-link to="/wallet"> Wallet</router-link>
                 <router-link to="/requests">Requests</router-link>
                 <a @click="displayProfile" v-click-outside="closeProfile"><span class="profile-tag">{{user}}</span></a>
@@ -38,7 +38,10 @@ export default {
                                             else { return 'Hi'} })
 
         const isAuth = computed(function() { return store.getters['userdat/getAuthStatus'] })
-        function displayProfile() { isProfile.value = !isProfile.value }
+
+        function displayProfile() {
+            isProfile.value = !isProfile.value
+        }
 
         function showProfile() {
             isProfile.value = false

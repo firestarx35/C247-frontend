@@ -7,20 +7,16 @@
             <component :is="Component" />
         </transition>
     </router-view>
-
 </template>
 
 <script>
 import "animate.css"
-import Flights from './Flights.vue';
-import Checkout from './Checkout.vue'
+import Flights from './Flights.vue'
 
 export default {
   components: {
     Flights,
-    Checkout,
   },
-
   setup() {
     
   },

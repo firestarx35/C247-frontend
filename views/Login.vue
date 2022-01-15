@@ -27,7 +27,7 @@
             </div>            
             <a :href="reset_password" id="forget-password"><p>Forgot Password</p></a>
         </div>
-<!-- signup -->
+
         <div class="signup-form" v-if="!isSelected">
             <div class="form-element">
                 <div class="fill-in">
@@ -104,7 +104,7 @@
 import { ref, onBeforeMount, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { links, imgs } from '../asset'
+import { fetchData, imgs, links } from '../asset'
 
 export default {
 
@@ -138,9 +138,14 @@ export default {
         onBeforeMount(async function() {
             const token = localStorage.getItem('c247-token')
             if ( token && token !="" && token != undefined && token != 'undefined' ) {
-                const response = await fetch(links('auto_login'), { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + token }});
-                if ( response.ok ) { store.dispatch('userdat/authenticateUser', token); router.push('/search') }
-                else { store.dispatch('userdat/displayError', {message: "Session Expired", type: false }) }
+                const status = await fetchData({ url:'auto_login', query: null, body: { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + token }}});
+                if (status.status == 200 ) { 
+                    store.dispatch('userdat/authenticateUser', token)
+                    router.push('/search') 
+                } else {
+                    console.warn("Fetch Failed with error code: ", status.status)
+                    store.dispatch('userdat/displayError', { message: "Session Expired", type: false })
+                }
             }
         })
 
@@ -150,8 +155,8 @@ export default {
 
         async function submitSignup() {
             if ((first_name.value.value!=='')&&(last_name.value.value!=='')&&(signup_email.value.value!=='')&&(signup_password.value.value!=='')&&
-            (confirm_password.value.value!=='')&&(iata_number.value.value!=='')&&(pincode.value.value!=='')&&(country.value.value!=='')&&
-            (company_name.value.value!=='')&&(mobile_number.value.value!=='')) {
+                (confirm_password.value.value!=='')&&(iata_number.value.value!=='')&&(pincode.value.value!=='')&&(country.value.value!=='')&&
+                (company_name.value.value!=='')&&(mobile_number.value.value!=='')) {
                 if ( signup_password.value.value == confirm_password.value.value ) {
                     signup_data = { first_name: first_name.value.value, last_name: last_name.value.value,
                                     email_id: signup_email.value.value, login_psk: signup_password.value.value,
@@ -159,25 +164,23 @@ export default {
                                     country: country.value.value, company_name: company_name.value.value, 
                                     phone_number: mobile_number.value.value
                                     }
-                    await fetch(links('signup_user'), { method: 'POST', mode: 'cors', headers: {'Content-Type': 'application/json' },
-                                                        body: JSON.stringify(signup_data)})
-                                                        .then(function(response) {
-                                                            if (response.ok) {return response }
-                                                            throw Error(response.status)
-                                                        })
-                                                        .then(function(response) { 
-                                                            store.dispatch('userdat/displayError', { message: "Account created", type: true })
-                                                        })
-                                                        .catch(function(error) {
-                                                            if (error.message == 409) {
-                                                                store.dispatch('userdat/displayError', { message: "Account already exist! Please login to continue", type: false }) 
-                                                                isSelected.value = true; 
-                                                            } else {
-                                                                console.warn("Fetch Failed")
-                                                            }
-                                                        })
-                } else { store.dispatch('userdat/displayError', { message: "Passswords do not match!", type: false })}
-            } else { store.dispatch('userdat/displayError', { message: "All fields must be filled!", type: false }) }
+                    const status = await fetchData({ url: 'signup_user', query: null, body: { method: 'POST', mode: 'cors', headers: {'Content-Type': 'application/json' },
+                                                                                            body: JSON.stringify(signup_data) }})
+                    if (status.status == 200){
+                        store.dispatch('userdat/displayError', { message: "Account created", type: true })
+                   }
+                    else if (status.status == 409) {
+                        store.dispatch('userdat/displayError', { message: "Account already exist! Please login to continue", type: false }) 
+                        isSelected.value = true; 
+                    } else {
+                        console.warn("Fetch Failed with error code: ", status.status)
+                    }
+                } else { 
+                    store.dispatch('userdat/displayError', { message: "Passswords do not match!", type: false })
+                }
+            } else { 
+                store.dispatch('userdat/displayError', { message: "All fields must be filled!", type: false }) 
+            }
         }
 
         async function submitLogin() {
@@ -185,37 +188,27 @@ export default {
                 var userdat = new FormData()
                 userdat.append("username", login_email.value.value)
                 userdat.append("password", login_password.value.value)
-                await fetch(links('login_user'), { method: 'POST', mode: 'cors', body: userdat })
-                .then(function(response) {
-                    if (response.ok) { return response }
-                    throw Error(response.status)
-                    })
-                    .then(function(response) { 
-                        return response.json()
-                        })
-                        .then(function(dat) {
-                                store.dispatch('userdat/displayError', { message: "Login successful", type: true })
-                                localStorage.setItem('c247-token', dat.access_token); 
-                                store.dispatch('userdat/authenticateUser', dat.access_token )
-                                router.push('/search')
-                            })
-                            .catch(function(error) {
-                                if (error.message == 404) {
-                                    store.dispatch('userdat/displayError', { message: "Account does not exist! Please signup to continue", type: false })
-                                    isSelected.value = false
-                                }
-                                else if (error.message == 406) {
-                                    store.dispatch('userdat/displayError', { message: "Invalid Password!", type: false })
-                                }
-                                else { 
-                                    console.warn("Fetch Failed")
-                                }
-                            })
+                const status = await fetchData({ url: 'login_user', query: null, body: { method: 'POST', mode: 'cors', body: userdat }})
+
+                if (status.status == 200 ) {
+                    store.dispatch('userdat/displayError', { message: "Login successful", type: true })
+                    localStorage.setItem('c247-token', status.message.access_token); 
+                    store.dispatch('userdat/authenticateUser', status.message.access_token )
+                    router.push('/search')
                 }
+                else if (status.status == 404 ) {
+                    store.dispatch('userdat/displayError', { message: "Account does not exist! Please signup to continue", type: false })
+                    isSelected.value = false
+                } 
+                else if (status.status == 406) {
+                    store.dispatch('userdat/displayError', { message: "Invalid Password!", type: false })
+                }
+                else { 
+                    console.warn("Fetch Failed with error code: ", status.status)
+                }
+            }
         }
             
-
-       
 
         return { CARGO247_White_BG_Logo, home_link, reset_password, isSelected, submitSignup, submitLogin, login_email, login_password, first_name, 
         last_name, signup_email, company_name, signup_password, confirm_password, iata_number, pincode, country, mobile_number,
@@ -225,17 +218,3 @@ export default {
 
 </script>
 
-<style scoped>
-
-.redstyle {
-    color: #FF0000
-}
-.bluestyle {
-    color: #00ff007b
-}
-
-h1 {
-    color: #0a0092;
-}
-
-</style>

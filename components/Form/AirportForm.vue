@@ -27,7 +27,6 @@ export default {
 
         onMounted(function() { if (props.station == 'source') { setTimeout(function() {input_field.value.focus()}, 1000 ) } })
 
-
         function getResults() {
             var dat = station.value.toLowerCase()
             if (dat !== '') { results.value = airports.value.filter(function airportCheck(value) {

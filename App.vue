@@ -1,13 +1,12 @@
-<template>
-    
+<template> 
     <nav-bar></nav-bar>   
     <error-show></error-show>
-    <!-- <loading-screen></loading-screen>  -->
-    <router-view v-slot="{ Component }">
+    <loading-screen v-if="isLoading"></loading-screen> 
+    <router-view v-slot="{ Component }" v-if="!isLoading">
         <transition
-         enter-active-class="animate__animated animate__fadeInRight"
-         leave-active-class="animate__animated animate__fadeOutLeft"
-         mode="out-in">
+            enter-active-class="animate__animated animate__fadeInRight"
+            leave-active-class="animate__animated animate__fadeOutLeft"
+            mode="out-in">
             <component :is="Component" />
         </transition>
     </router-view>
@@ -17,20 +16,26 @@
 <script>
 import "animate.css"
 import NavBar from './components/NavBar.vue'
-// import LoadingScreen from './components/LoadingScreen.vue'
+import LoadingScreen from './components/LoadingScreen.vue'
+import { computed } from '@vue/runtime-core'
+import { useStore } from 'vuex'
 export default {
     components: {
         NavBar,
-        // LoadingScreen,
+        LoadingScreen,
     },
   setup() {
+    const store = useStore()
+    const isLoading = computed(function() { return store.getters['userdat/loadingState']})
     
-  return { }},
+  return { isLoading }},
 }
 </script>
 
 <style >
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&display=swap');
+
+
 
 /* Added styles */
 .active-list {
@@ -41,13 +46,6 @@ export default {
 
 /* For highlighting expanded airline card in airline listings page. */
 .active-card {
-  width: 390px;
-  height: 98px;
-  background: #fff;
-  border-bottom: 35px solid #ffcb00;
-  border-radius: 13px;
-  margin: 10px 0px 10px 15px;
-  cursor: pointer;
   box-shadow: 0px 0px 4px 3px rgba(0, 0, 0, 0.3);
 }
 /* Added ends */
@@ -69,12 +67,20 @@ body {
   background: #f0f0f0;
   position: relative;
 }
-h1,
-h2,
+
 h3,
 h4,
 h5 {
   font-weight: 400;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 300;
+}
+
+h2 {
+  font-weight: 300;
 }
 
 nav {
@@ -183,7 +189,6 @@ nav {
 
 .step-img .twin-image-container img:last-child {
   width: 13rem;
-  z-index: 1000;
   position: absolute;
   top: 18%;
   right: 40%;
@@ -303,10 +308,7 @@ nav {
   margin: 4rem auto;
 }
 /* ====================Clouds End=================== */
-h1 {
-  font-size: 2rem;
-  font-weight: 300;
-}
+
 
 #steps > h1 {
   text-align: center;
@@ -382,7 +384,7 @@ nav {
 }
 
 .profile-container {
-  border-radius: 2rem;
+  border-radius: .4rem;
   background: #fff;
   padding: 1rem 0;
   margin-bottom: 1rem;
@@ -394,7 +396,7 @@ nav {
   justify-items: center;
 }
 .profile-container-2 {
-  border-radius: 2rem;
+  border-radius: .4rem;
   background: #fff;
   padding: 1rem 4rem 1rem 4rem;
   margin-bottom: 1rem;
@@ -407,7 +409,7 @@ nav {
 
 .achievement-tag {
   background-color: #ffcb00;
-  border-radius: 1rem;
+  border-radius: .4rem;
   padding: 1rem;
   display: grid;
   grid-template-columns: 4fr 1fr;
@@ -451,7 +453,7 @@ nav {
   height: 90%;
   margin: 1rem;
   padding: 1rem;
-  border-radius: 2rem;
+  border-radius: .4rem;
   box-shadow: 5px 3px 5px rgba(0, 0, 0, 0.2);
 }
 
@@ -485,7 +487,7 @@ nav {
   align-content: center;
 }
 .searchable-2 {
-  margin: none;
+  margin: 0;
   border-radius: 2rem;
   position: relative;
   height: 2.2rem;
@@ -627,16 +629,14 @@ footer .nav-links a:hover {
   box-shadow: 0 0 10px 10px rgb(255, 255, 255);
   flex-shrink: 0;
   position: absolute;
+  animation: blink 1s infinite;
+  z-index: 1100;
 }
 .one {
-  animation: blink 1s infinite;
   transform: translate(15px, 0px);
-  z-index: 1100;
 }
 .two {
-  animation: blink 1s infinite;
   transform: translate(-15px, 0px);
-  z-index: 1100;
 }
 
 .tail-light {
@@ -802,11 +802,9 @@ footer .nav-links a:hover {
 /* ==================================Summary Bar Starts============================= */
 .summary-bar {
   width: 100%;
-  margin: 0 auto;
-  background: rgba(0, 0, 0, 0.75);
+  background: #dfdfdf;
   align-items: center;
   display: flex;
-  color: #fff;
   padding: 0.3rem 2rem;
   border-top: 3.1rem solid rgb(59, 59, 59);
 }
@@ -818,14 +816,17 @@ footer .nav-links a:hover {
   margin-right: auto;
 }
 
+.summary-bar button {
+  height: auto ;
+  padding: 0 2rem;
+  margin-left: 1.5rem;
+}
+
 .summary-bar-airports {
   display: flex;
   align-items: center;
 }
 
-.summary-bar-airports > h1 {
-  color: #fff;
-}
 
 .summary-bar-airports img {
   height: 2rem;
@@ -838,8 +839,14 @@ footer .nav-links a:hover {
   width: 100%;
 }
 
+.summary-bar-airports h1 {
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
 .summary-bar-totals h3 {
   margin: auto 5rem;
+  font-size: 1rem;
 }
 
 .btn-1 {
@@ -849,6 +856,16 @@ footer .nav-links a:hover {
   border-radius: 2rem;
   border: none;
   box-shadow: 0px 0px 5px 4px rgb(92 92 92 / 32%);
+}
+
+#cargo-specs {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#cargo-specs p {
+  margin: 0 1rem;
 }
 
 @media screen and (max-width: 1400px) {
@@ -869,60 +886,12 @@ footer .nav-links a:hover {
 }
 /* ==================================Summary Bar Ends============================= */
 /* ==================================Filters Start================================= */
-.ticket_filters {
+.ticket-filters {
   width: 100%;
-  max-width: 1600px;
-  margin: 0.4rem auto -1rem auto;
-}
-
-.filter-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 10rem);
+  display: flex;
+  margin: 0.4rem auto 0 auto;
+  padding: 0 1rem;
   justify-content: space-between;
-  background-color: #ffffff8f;
-  padding: 0.3rem 2rem;
-  border-radius: 2rem;
-  /* border: 3px solid #ffcc009d; */
-}
-.filter-grid h3 {
-  margin: auto auto auto 0;
-}
-.filter-box {
-  padding: 0.5rem 2rem 0.5rem 1rem;
-  border-left: 2rem #3f3f3f solid;
-  /* box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);  */
-  border-radius: 0.5rem;
-  background: #fff;
-  opacity: 0.4;
-  cursor: pointer;
-}
-.earliest {
-  border-left: 2rem #345eff solid;
-  opacity: 1;
-  box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
-}
-
-.sameday {
-  background: #333;
-  border-left: 2rem #ffcb00 solid;
-  color: #fff;
-}
-
-.cheapest {
-  border-left: 2rem #8f55a2 solid;
-}
-
-.greenest {
-  border-left: 2rem #9acd32 solid;
-}
-
-.best {
-  border-left: 2rem solid #459fe3;
-}
-
-.filter-box:hover {
-  opacity: 1;
-  box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
 }
 /* ==================================Filters Ends================================= */
 
@@ -932,14 +901,16 @@ footer .nav-links a:hover {
   height: 98px;
   background: #fff;
   border-bottom: 35px solid #ffcb00;
-  border-radius: 13px;
+  border-radius: .4rem;
   box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
-  margin: 10px 0px 10px 15px;
+  margin: 0 3rem .5rem .5rem;
   cursor: pointer;
 }
 
-.card-container:hover {
-  box-shadow: 0px 0px 4px 3px rgba(0, 0, 0, 0.3);
+.selected {
+  box-shadow: 0px 0px 4px 3px rgba(0, 0, 0, 0.445);
+  transform: scale(102%);
+  z-index: 0;
 }
 
 .priority-card {
@@ -975,7 +946,7 @@ footer .nav-links a:hover {
 
 .card-flex-box {
   font-family: "Inconsolata", monospace;
-  font-weight: bold;
+  font-weight: 400;
   font-size: 15px;
   width: 195px;
   padding: 0 10px;
@@ -984,7 +955,7 @@ footer .nav-links a:hover {
 .card-flex-box-left {
   display: flex;
   font-family: "Inconsolata", monospace;
-  font-weight: bold;
+  font-weight: 400;
   font-size: 15px;
   width: 130px;
   padding: 4px 0 10px 10px;
@@ -994,7 +965,7 @@ footer .nav-links a:hover {
 .card-flex-box-center {
   display: flex;
   font-family: "Inconsolata", monospace;
-  font-weight: bold;
+  font-weight: 400;
   font-size: 15px;
   width: 130px;
   height: 40px;
@@ -1006,7 +977,7 @@ footer .nav-links a:hover {
 .card-flex-box-right {
   display: flex;
   font-family: "Inconsolata", monospace;
-  font-weight: bold;
+  font-weight: 400;
   font-size: 15px;
   width: 130px;
   padding: 4px 10px 010px;
@@ -1118,30 +1089,31 @@ footer .nav-links a:hover {
 
 /* ======================================Airline Bar =====================================*/
 .airline-bar {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 1600px;
-  margin: 20px auto;
-  padding: 10px 0 10px 10px;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-  background: #cccccc9f;
-  border: rgba(255, 255, 255, 0.8) 1px solid;
+  display: grid;
+  grid-template-columns: 9rem auto;
+  margin: 1rem 1rem;
+  padding: 10px 10px 10px 10px;
+  border-radius: .4rem;
+  background: #fff;
 }
+
+.airline-bar:hover {
+  transform: scale(101%);
+  z-index: 0;
+}
+
 .logo-name {
+  grid-column: 1;
   display: flex;
   width: 130px;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 16px 0 0 16px;
+  border-radius: .6rem 0 0 .6rem;
   background: #fff;
-  height: auto;
+  /* height: auto;
   padding-left: 10px;
-  padding-right: 10px;
+  padding-right: 10px; */
 }
 .logo-name div > img {
   width: 100px;
@@ -1158,9 +1130,9 @@ footer .nav-links a:hover {
 .card-scroll {
   display: flex;
   overflow: auto;
-  padding-right: 10px;
+  padding-right: .5rem;
+  padding-top: .5rem;
   height: auto;
-  /* border: white 2px solid; */
 }
 
 ::-webkit-scrollbar {
@@ -1176,7 +1148,7 @@ footer .nav-links a:hover {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #ffcb00;
+  background: rgba(70, 70, 70, 0.582);
   border-radius: 5px;
 }
 
@@ -1200,11 +1172,15 @@ footer .nav-links a:hover {
   cursor: pointer;
   padding: 5px;
   align-self: center;
-  /* border: pink 2px solid; */
+}
+
+.btn-block img {
+  height: 2rem;
 }
 
 /* ========================================= Airline Card Starts======================================= */
 .card-nav-wrapper {
+  grid-column: 2/2;
   display: block;
   width: 100%;
   /* border: red 2px solid; */
@@ -1213,82 +1189,22 @@ footer .nav-links a:hover {
 
 .expansion-wrapper {
   width: 100%;
-  /* border: green 2px solid; */
+  grid-column: 1/3;
   display: block;
-  /* display: none; */
-  /* min-height: 280px; */
-  padding: 0.6rem 1.2rem;
+  margin-top: .8rem;
   overflow: auto;
+  border-radius: .4rem;
 }
 
-.card-expansion-container h1,
-.card-expansion-container h2,
-.card-expansion-container h3,
-.card-expansion-container h4,
-.card-expansion-container h5,
-.card-expansion-container h6 {
-  font-weight: 400;
+.expansion-wrapper .card-container-2 {
+  margin-top: 0;
+  margin-bottom: 0;
+  background-color: #ececec;
 }
 
-.airline-breakdown {
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  margin: auto;
-}
-
-.source-destination {
-  display: flex;
-  padding: 0 1rem 1rem 1rem;
-  width: 500px;
-}
-
-.source-text {
-  text-align: end;
-  padding-right: 1rem;
-  border-right: solid 2px grey;
-}
-
-.plane-number-logo {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  padding: 1rem;
-}
-
-.plane-number-logo img {
-  width: 110px;
-}
-
-.dest-text {
-  text-align: start;
-  padding-left: 1rem;
-  border-left: solid 2px grey;
-}
-
-.cost-breakdown {
-  display: flex;
-  flex-direction: column;
-}
-
-.rate-duration-total {
-  border-top: #bfc0c0 solid 2px;
-  padding: 0.7rem;
-}
-
-.cost-breakdown div {
-  display: flex;
-  justify-content: space-evenly;
-}
-
-.costs {
-  padding: 0.7rem;
-  background-color: #345dff1a;
-  border-radius: 2rem;
-}
-.cost-breakdown div:last-child {
-  margin-top: 1rem;
+.expansion-wrapper .card-container-2:hover {
+  transform: scale(100%);
+  z-index: 0;
 }
 
 /* ============ Button 3============= */
@@ -1307,8 +1223,9 @@ footer .nav-links a:hover {
 
 /* ========================================= Airline Card Ends======================================= */
 #airline_listing {
-  margin: 0 1rem;
+  margin: 6.5rem 1rem;
 }
+
 
 /* ========================================= Airline Card Expansion Starts======================================= */
 
@@ -1323,17 +1240,8 @@ footer .nav-links a:hover {
   backdrop-filter: blur(6px);
   justify-self: center;
 }
-.card-expansion-container .cross-button span {
-  font-size: 1rem;
-  width: 100%;
-  text-align: center;
-  padding-bottom: 0.2rem;
-}
 .card-expansion-container .cross-button {
-  display: flex;
-  align-items: center;
   cursor: pointer;
-  background-color: #ffcc00;
   position: absolute;
   top: 0.8rem;
   right: 1rem;
@@ -1410,6 +1318,410 @@ footer .nav-links a:hover {
 
 /* ==================================Airline listing Ends============================= */
 
+
+
+
+/* ==================================Airline listing -2 Starts============================= */
+
+
+#airline-listings-2 {
+  margin-top: 3.5rem;
+  display: grid;
+}
+
+/* =============================Edit bar Starts========================== */
+
+/* ========================Airports options Starts======================= */
+
+.airport-date {
+  display: flex;
+  flex-direction: row;
+}
+
+#edit-details-bar {
+  position: fixed;
+  display: flex;
+  top: 3rem;
+  width: 100%;
+  padding: .2rem 2rem;
+  background-color: #dfdfdf;
+  height: auto;
+  z-index: 1;
+  justify-content: space-between;
+} 
+
+#bar-icon {
+  height: 2rem;
+  align-items: center;
+  margin: 0 .3rem;
+  transform: rotateZ(90deg);
+}
+
+#bar-icon > img {
+  height: 2rem;
+}
+
+.airports-2 {
+  display: flex;
+  align-items: center;
+  height: auto;
+}
+
+#dep-airport, #arr-airport {
+  background-color: #fff;
+  height: 2rem;
+  margin: 0 .3rem;
+  width: 14rem;
+  border-radius: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+#dep-full, #arr-full {
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+  font-size: 80%;
+}
+
+#dep-id, #arr-id {
+  padding: 0 1rem;
+  background-color: #ffcb00;
+  border-radius: 0 2rem 2rem 0;
+  font-size: 120%;
+  display: flex;
+  align-items: center;
+}
+
+#dep-date {
+  background-color: #fff;
+  height: 2rem;
+  margin: 0 .3rem;
+  border-radius: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+#dep-date p:first-child {
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+}
+#dep-date p:last-child {
+  padding: 0 1rem;
+  background-color: #ffcb00;
+  border-radius: 0 2rem 2rem 0;
+  font-size: 120%;
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+/* ========================Airports options Ends======================= */
+
+/* ========================Date range Starts======================= */
+
+#button-div {
+  height: 100%;
+  flex-wrap: nowrap;
+  display: flex;
+  align-items: center;
+  justify-self: end;
+}
+#button-div button {
+  height: 2rem;
+  margin: .3rem;
+  width: auto;
+  padding: 0 1rem 0 1rem ; 
+}
+
+/* ========================Date range Ends======================= */
+
+
+/* ========================Filters Starts======================= */
+
+#filters-div {
+  display: flex;
+  align-items: center;
+}
+
+#filters-div h3 {
+  font-weight: 500;
+  /* margin: auto 1rem auto auto; */
+}
+
+#filters-div p {
+  margin: 0 .5rem;
+  border-radius: 2rem;
+  padding: 0.4rem 1rem;
+  justify-self: auto;
+}
+
+#airline-filter {
+  background-color: #fff;
+  font-size: 80%;
+  cursor: pointer;
+}
+
+#economical {
+  background: #8f55a2;
+  color: #fff;
+  border-radius: 2rem;
+  width: max-content;
+  padding: .35rem 1rem;
+  font-size: 80%;
+  cursor: pointer;
+}
+
+#fastest {
+  background: #345EFF;
+  color: #fff;
+  border-radius: 2rem;
+  width: max-content;
+  padding: .35rem 1rem;
+  font-size: 80%;
+  cursor: pointer;
+}
+
+#greenest {
+  background: #9acd32;
+  border-radius: 2rem;
+  width: max-content;
+  padding: .35rem 1rem;
+  font-size: 80%;
+  cursor: pointer;
+}
+
+/* ========================Filters Ends======================= */
+
+@media screen and (max-width: 1200px) {
+  #edit-details-bar {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+
+/* =============================Edit bar Ends========================== */
+
+.best-dep {
+  margin: 2.8rem 2rem;
+}
+
+.card-container-2 {
+  display: grid;
+  border-radius: .4rem;
+  margin: 1rem 0;
+  background-color: #fff;
+  grid-template-columns: 70% 20% 6rem;
+  transition: all .2s ease;
+}
+
+.card-container-2:hover {
+  transform: scale(101%);
+  z-index: 0;
+}
+
+.best-dep > h2 {
+  margin-bottom: 1rem;
+}
+
+.card-container-strip {
+  width: 100%;
+  grid-column: 1/5;
+  height: 5rem;
+  font-weight: 400;
+  border-radius: .4rem;
+  display: grid;
+  grid-template-columns: 0.3fr .8fr .6fr .6fr .6fr .6fr 0.6fr;
+  padding: 0 1rem;
+  grid-gap: .5rem;
+  justify-items: center;
+}
+
+.airline-logo {
+  /* width: 4rem; */
+  display: flex;
+  align-items: center;
+}
+
+.airline-logo img {
+  height: 4rem;
+}
+
+.data-1 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.p-1 {
+  font-size: 120%;
+  margin-top: .4rem;
+  margin-bottom: 0.4rem;
+}
+
+.p-2 {
+  font-size: 100%;
+  margin-bottom: .4rem;
+  color:  navy;
+}
+
+.p-11 {
+  font-size: 120%;
+  margin-top: .4rem;
+}
+
+.p-22 {
+  font-size: 100%;
+  color:  navy;
+  margin-bottom: .4rem;
+}
+
+.p-l {
+  text-align: left;
+  width: 100%;
+}
+
+.p-r {
+  text-align: right;
+  width: 100%;
+}
+
+.data-2 {
+  display: grid;
+  grid-template-columns: .7fr 1fr .7fr;
+  grid-column: span 2;
+  align-items: center;
+  justify-items: center;
+  width: max-content;
+}
+
+.data-2 img {
+  width: 5rem;
+  padding: 0 1rem;
+}
+
+.data-3 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.data-4 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-space {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: right;
+  width: 6rem;
+}
+
+.exp-aline-aport-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.exp-aline-aport {
+  display: grid;
+  grid-template-columns: 20% 80%;
+}
+
+.icon-no {
+  display: flex;
+  flex-direction: column;
+  margin-left: 2rem;
+  justify-items: center;
+}
+
+.icon-no img {
+  height: 4rem;
+  width: 3rem;
+}
+
+.transit-port {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.transit-port div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin: .4rem 0;
+}
+
+.transit-port div:nth-child(even) p{
+  color: navy;
+}
+
+.a-icon img {
+  height: 1.6rem;
+  margin: auto 1rem !important;
+}
+
+.a-dot {
+  border-radius: 50%;
+  background-color: #ffcb00;
+  height: 1rem;
+  width: 1rem;
+  margin: auto 1rem !important;
+}
+
+.lay-time {
+  display: grid;
+  grid-template-columns: 20% 80%;
+  margin: .3rem 0;
+}
+
+.lay-time p {
+  grid-column: 2;
+  margin-left: 3rem;
+  color: navy;
+}
+
+.p-btn {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  grid-column: 2/5;
+  padding: 1rem 0;
+}
+
+.p-btn button {
+  min-height: 2.5rem;
+  margin: 0 1rem 0 auto;
+}
+
+.price-breakdown {
+  display: grid;
+  grid-template-columns: 70% 30%;
+  padding: 0 1rem;
+  /* margin: auto; */
+  height: 100%;
+  width: 100%;
+  margin-bottom: 1rem;
+  text-align: left;
+  align-content: space-around;
+}
+
+
+/* ==================================Airline listing -2 Ends============================= */
+
 /* ======================================Cart Section starts=================================== */
 
 /* ==================================Saved Section============================= */
@@ -1437,7 +1749,7 @@ section > h2 {
 
 .saved-card {
   width: 100%;
-  min-width: 850px;
+  /* min-width: 850px; */
   /* height: 11rem; */
   background: #fff;
   border-radius: 1.2rem;
@@ -1445,11 +1757,10 @@ section > h2 {
   display: grid;
   grid-template-columns: 1fr 4fr 1fr;
   padding: 1rem;
-  box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
+  /* box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3); */
   margin-bottom: 1rem;
-  /* overflow: auto; */
+  overflow: auto;
   position: relative;
-
 }
 
 .saved-card:hover {
@@ -1477,12 +1788,12 @@ section > h2 {
 }
 
 .saved-card .flight-num img {
-  width: 140px;
+  width: 6rem;
   margin: auto;
 }
 
 .saved-card .flight-num p {
-  font-size: 1.7rem;
+  font-size: 1.3rem;
   margin: 0;
 }
 
@@ -1591,25 +1902,36 @@ section > h2 {
 } 
 
 /* ===Cross Button=== */
-.saved-card .cross-button span {
-  font-size: 1rem;
-  width: 100%;
-  text-align: center;
-  padding-bottom: 0.2rem;
-  /* border: 1px solid red; */
-}
 .saved-card .cross-button {
-  display: none;
   cursor: pointer;
-  background-color: #ffcc00;
+  display: flex;
   position:absolute;
   top: 0.4rem;
   left: 0.4rem;
-  width: 1.5rem;
-  border-radius: 50%;
 }
-.saved-card:hover .cross-button {
+.saved-card .cross-button > img {
+  height: 1.2rem;
+} 
+.saved-card .cross-button:hover  {
+  transform: scale(140%);
+}
+
+.empty-pallet {
+  width: 100%;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+}
+
+.empty-pallet img {
+  height: 8rem;
+}
+
+.empty-pallet h1 {
+  text-align: center;
+  color:rgba(0, 0, 0, 0.541);
+  font-weight: 500;
 }
 
 @media screen and (max-width: 1200px) {
@@ -1711,91 +2033,11 @@ section > h2 {
 #expandable-button {
   width: auto;
   border-radius: 1rem;
-  display: flex;
-  /* animation: expand 1s ease forwards; */
-  position: relative;
-  z-index: 2;
-  justify-content: center;
+  /* display: flex;
+  justify-content: space-evenly; */
+  /* border: solid red 2px; */
 }
 
-#book-update {
-  z-index: 100;
-  position: absolute;
-  width: 95%;
-  background-color: #ffcb00;
-  border-radius: 2rem;
-  font-size: 90%;
-  text-align: center;
-  /* animation: hide 1s ease forwards; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#book-update span {
-  align-content: center;
-}
-
-#now {
-  z-index: 10;
-  position: absolute;
-  width: 95%;
-  background-color: #ffcb00;
-  border-radius: 1rem;
-  outline: none;
-  top: 0px;
-  margin: 4px;
-}
-
-#update {
-  outline:  none;
-  background-color: #ffcb00;
-  position: absolute;
-  width: 95%;
-  border-radius: 1rem;
-  outline: none;
-  /* animation: godown 1s ease forwards; */
-  margin: 4px;
-}
-/* 
-@keyframes expand {
-  0% {
-    height: 2.2rem;
-  }
-
-  100% {
-      height: 5.3rem;
-  }
-}
-
-@keyframes godown {
-  0% {
-    
-  }
-
-  100% {
-      transform: translateY(2.5rem);
-  }
-}
-
-@keyframes hide {
-  0% {
-      opacity: 1;
-      z-index: 0;
-  }
-
-  10% {
-      opacity: 0;
-      display: none;
-  }
-
-  100% {
-      opacity: 0;
-      display: none;
-      z-index: 0;
-  }
-}
- */
 /* =========================================================Expanding Button Ends============================ */
 
 /* =========================================================Cart page cargo details overlay Starts============================ */
@@ -1807,16 +2049,16 @@ section > h2 {
   z-index: 1000;
   top: 0;
   right: 0;
-  /* background-color: rgb(0,0,0); */
   background-color: rgba(0,0,0, 0.7);
   overflow-x: hidden;
   transition: 0.5s;
   backdrop-filter: blur(3px);
+  display: flex;
 }
 
 .overlay-content {
   position: relative;
-  /* top: 25%; */
+  margin: auto 0;
   width: 100%;
   text-align: center;
   padding: 5%;
@@ -1825,15 +2067,18 @@ section > h2 {
 .overlay .closebtn {
   position: absolute;
   padding: 0;
-  height: auto;
   margin: 0;
-  background: #ffcb00;
-  top: 20px;
+  top: 2rem;
+  right: 2rem;
   font-size: 2rem;
-  color: #000;
   text-decoration: none;
+  cursor: pointer;
 }
 
+.closebtn img {
+  height: 2rem;
+  cursor: pointer;
+}
 /* =========================================================Cart page cargo details overlay Ends============================ */
 
 /* =======================================================Cart Section Ends================================================= */
@@ -1845,7 +2090,7 @@ section > h2 {
 /* ======================================Booking History Starts=================================== */
 
 .booking-history-container {
-  padding: 0 5rem;
+  padding: 0 2rem;
   height: 100vh;
 }
 
@@ -1858,27 +2103,15 @@ section > h2 {
 
 #booking-history > h1 {
   padding-top: 2rem;
-  padding-left: 3rem;
-  font-size: 1.2rem;
-}
-.booking-container h1 {
-  padding-top: 0rem;
-  padding-left: 0rem;
-  font-size: 1.6rem;
-  font-weight: 400;
 }
 
 .filters-search {
   display: flex;
+  flex-grow: 1;
   width: 100%;
-  justify-items: auto;
   border-radius: 3rem;
-  margin-top: 4rem;
-  padding: 0.2rem 1rem;
-  justify-content: space-between;
-}
-.filters-search h2 {
-  font-weight: 400;
+  padding: 1rem 0 0 0rem;
+  justify-content: flex-end;
 }
 
 .filters {
@@ -1889,27 +2122,79 @@ section > h2 {
   background-color: #d8d8d8;
   padding: 1rem 0 1rem 3rem;
   border-radius: 2rem;
-  max-width: 1600px;
-  margin: 1rem auto 0 auto;
 }
-.expansion-container .saved-card {
-  display: none;
-}
-.expansion-container:hover {
+
+.expansion-container {
+  border-radius: .4rem;
   background-color: #fff;
-  border-radius: 2rem;
+  transition: all .2s ease;
+  margin: .4rem 0;
+  box-shadow: 3px 3px 4px 0 rgba(0, 0, 0, 0.25),
+    -8px -8px 12px 0 rgba(255, 255, 255, 0.3);
 }
-.expansion-container:hover .saved-card {
+
+.expansion-container:hover {
+  transform: scale(101%);
+  z-index: 0;
+  box-shadow: 0px 0px 5px 4px rgb(92 92 92 / 32%);
+}
+
+.expansion-container .saved-card {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  border-radius: .3rem;
+  background-color: #fff;
+  margin-bottom: 0;
 }
+
+.expansion-container .saved-card:hover {
+  box-shadow: none;
+}
+
+.expansion-container .saved-card .airline {
+  display: flex;
+  align-content: center;
+  padding-right: 1rem;
+}
+
+.expansion-container .saved-card .airline img {
+  height: 3rem;
+}
+
+.expansion-container .details {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  padding-left: 1rem;
+  border-left: 3px solid #d8d8d8;
+  border: teal;
+}
+
+.expansion-container .details .column-1,
+.expansion-container .details .column-2 {
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-between;
+  margin-bottom: .5rem;
+}
+
+.expansion-container .details .column-1 h1,
+.expansion-container .details .column-2 h1 {
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.expansion-container .details .column-2 {
+  margin-bottom: 0;
+  align-items: center;
+  color: navy;
+}
+
 .search-bar {
   height: 2.2rem;
   display: flex;
   flex-direction: row;
   background-color: #ffcb00;
-  width: 25rem;
+  width: 15rem;
   align-items: center;
   padding: 3px;
   border-radius: 2rem;
@@ -1917,7 +2202,6 @@ section > h2 {
 .search-bar h4 {
   width: 40%;
   text-align: center;
-  font-weight: 600;
 }
 .search-bar input {
   width: 60%;
@@ -1930,35 +2214,55 @@ section > h2 {
   border-radius: 2rem;
   outline: none;
 }
-.search-bar:focus .search-bar {
+.search-bar:focus .search-bar{
   width: 20rem;
 }
 
 .heading-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: 2fr 2fr 2fr 3fr 3fr 3fr 1fr;
   padding: 1rem 3rem;
-  background-color: #ffcc009d;
+  background-color: #dfdfdf;
   border-radius: 2rem;
 }
+
+.heading-grid {
+  margin-bottom: 1rem;
+}
+
 .heading-grid h4 {
   padding: 0 1rem 0 0;
-  font-weight: 600;
 }
 
-.entry-grid h4 {
+.expansion-container .entry-grid h4{
   font-weight: 400;
 }
-.entry-grid {
+
+.expansion-container .entry-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  border-radius: .4rem;
+  grid-template-columns:  2fr 2fr 2fr 3fr 3fr 3fr 1fr;
   padding: 1rem 3rem;
-  border-radius: 2rem;
   transition: all 0.3s;
+  background-color: #fff;
 }
 
-.entry-grid:hover {
+.expansion-container .entry-grid:hover {
   background-color: #fff;
+}
+
+.btn:hover {
+  box-shadow: 5px 3px 10px rgba(0, 0, 0, 0.5);
+} 
+
+@media screen and (max-width: 1000px) {
+  .expansion-container .saved-card .airline img {
+    height: 2rem;
+  }
+
+  .expansion-container .saved-card {
+    min-width: auto;
+  }
 }
 /* ======================================Booking History Starts=================================== */
 
@@ -1983,11 +2287,11 @@ section > h2 {
   color: #000;
   padding: 2rem;
   margin: 1rem auto;
-  border-radius: 2rem;
+  border-radius: .4rem;
   box-shadow: 0px 0px 5px 4px rgb(92 92 92 / 32%);
 }
 
-.booking-container h1 {
+.booking-container h2 {
   margin: 1rem 0;
   color: #000000c4;
 }
@@ -2041,7 +2345,7 @@ section > h2 {
 
 .cargo-summary {
   background: #d8d8d850;
-  border-radius: 1rem;
+  border-radius: .4rem;
 }
 
 .cargo-grid {
@@ -2057,15 +2361,6 @@ section > h2 {
   text-align: center;
 }
 
-.cost-section {
-  display: flex;
-  flex-direction: column;
-  margin: 0 1rem;
-  padding: 0 1rem 2rem 1rem;
-  background: #d8d8d850;
-  border-radius: 1rem;
-  min-width: 25%;
-}
 .cost-section > form > h5 {
   margin: 1rem;
   text-align: center;
@@ -2181,7 +2476,7 @@ form input {
 }
 
 .cargo-details-container {
-  border-radius: 2rem;
+  border-radius: .4rem;
   background: #fff;
   padding: 1rem 4rem 1rem 4rem;
   margin-bottom: 1rem;
@@ -2216,6 +2511,7 @@ form input {
   display: flex;
   border: #ffcb00 3px solid;
   margin: 2rem 0;
+  /* position: absolute; */
 }
 
 .my-1 {
@@ -2231,17 +2527,23 @@ form input {
   font-size: 12px;
   align-content: center;
 }
+
 .fill-in h4 span {
   font-size: 120%;
   color: red;
 }
+
 .searchable {
   width: 60%;
-  margin: none;
+  margin: 0;
+  display: flex;
   border-radius: 2rem;
   position: relative;
   height: 2.2rem;
+  align-items: center;
+  position: relative;
 }
+
 .searchable input {
   width: 100%;
   height: 100%;
@@ -2253,9 +2555,25 @@ form input {
   font-family: "montserrat";
   font-weight: 500;
 }
+
 .searchable input:focus {
   box-shadow: 0 0 0px 5px #fcf4d9;
   background: #fcf4d9;
+}
+
+.form-indicator {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  right: -1.4rem;
+  position: absolute;
+}
+
+.form-indicator img {
+  height: 1rem;
+  margin: auto;
+  padding: auto;
 }
 
 .fill-in button {
@@ -2267,6 +2585,7 @@ form input {
   font-family: "montserrat";
   padding: 0.1rem 1rem;
   margin: 0.5rem 0;
+  cursor: pointer;
 }
 
 .btn:hover {
@@ -2288,7 +2607,10 @@ form input {
 .cargo-summary-element p {
   margin: 8px 0 0 0;
   text-align: center;
-  color: #000000;
+  color: navy;
+}
+.cargo-summary-element p:first-of-type {
+  color: #000;
 }
 .cargo-details-subcontainer-6 {
   display: grid;
@@ -2362,108 +2684,6 @@ form input {
 }
 /* ====================================Request Ends=============================== */
 
-/* ==================================Calender Starts=================================*/
-
-.calendar {
-  width: 400px;
-  min-height: 400px;
-  left: 5px;
-  z-index: 10000;
-  background: #dfdfdf;
-  border: 1px white solid;
-  position: absolute;
-  /* backdrop-filter: blur(20px); */
-  margin-top: 0.5rem;
-  border-radius: 2rem;
-  display: none;
-  padding: 1rem;
-  justify-content: center;
-  align-items: center;
-}
-.searchable input:focus + div .calendar {
-  display: flex;
-}
-#dycalendar {
-  width: 100%;
-}
-#dycalendar table {
-  width: 100%;
-  margin-top: 4rem;
-  font-size: 1.2rem;
-  border-spacing: 5px;
-}
-#dycalendar table td {
-  padding: 0.7rem;
-  cursor: pointer;
-  transition: all 0.25s ease-out;
-}
-#dycalendar table td:hover {
-  background: #fff !important;
-  color: #000 !important;
-  border-radius: 0.5rem !important;
-}
-#dycalendar table tr:nth-child(1) td {
-  background: #fff;
-  color: rgb(0, 0, 0);
-  border-radius: 0.5rem;
-  padding: 0.7em;
-}
-.dycalendar-month-container .dycalendar-today-date,
-.dycalendar-month-container .dycalendar-target-date {
-  background: #ffcb00 !important;
-  color: #000 !important;
-  border-radius: 0.5rem !important;
-}
-.dycalendar-month-container
-  .dycalendar-header
-  .dycalendar-prev-next-btn.prev-btn {
-  background: rgba(0, 0, 0, 0.15);
-  color: #000;
-  width: 44px;
-  height: 38px;
-  left: 4px;
-  border-radius: 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
-  font-weight: bold;
-}
-.dycalendar-month-container
-  .dycalendar-header
-  .dycalendar-prev-next-btn.next-btn {
-  background: rgba(0, 0, 0, 0.15);
-  color: #000;
-  width: 44px;
-  height: 38px;
-  right: 4px;
-  border-radius: 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
-  font-weight: bold;
-}
-.dycalendar-month-container .dycalendar-span-month-year {
-  color: #3b3b3b;
-  font-size: 1.7rem;
-  font-weight: 600;
-}
-
-/* ======================This css styles is to remove the calender
-icon from the input field. ================================== */
-
-/* input[type="date"]::-webkit-calendar-picker-indicator {
-    display: none;
-    -webkit-appearance: none;
-    width: 15px;
-    padding: 0px;
-    margin: 0px;
-    margin-top: 10px;
-} */
-
-/* ==================================Calender Ends=================================*/
-
 /* =========================================================Login Starts============================================================ */
 
 #error-message {
@@ -2473,13 +2693,13 @@ icon from the input field. ================================== */
   display: flex;
   justify-content: center;
   height: 3rem;
-  z-index: 1000;
+  z-index: 1000000;
 }
 
 #error-message p {
   padding: 1rem 7rem;
   border-radius: 2rem;
-  background-color: #ff260085;
+  background-color: #f44336;
   width: fit-content;
   color: #fff;
 }
@@ -2491,14 +2711,15 @@ icon from the input field. ================================== */
   display: flex;
   justify-content: center;
   height: 3rem;
-  z-index: 1000;
+  z-index: 1000000;
 }
 
 #positive-message p {
   padding: 1rem 7rem;
   border-radius: 2rem;
-  background-color: #ffcb00;
+  background-color: #ffcc00;
   width: fit-content;
+  color: #000;
 }
 
 .home-logo {
@@ -2520,7 +2741,7 @@ icon from the input field. ================================== */
 .login-signup {
   background-color: #fff;
   padding: 2rem;
-  border-radius: 2rem;
+  border-radius: .4rem;
   width: 40%;
   margin: auto;
   box-shadow: 0px 0px 5px 4px rgba(92, 92, 92, 0.315);
@@ -2597,11 +2818,10 @@ icon from the input field. ================================== */
   background: #dfdfdf;
   border: 1px white solid;
   top: 3.3rem;
-  border-radius: 1rem;
+  border-radius: .4rem;
   padding: 0.6rem;
   z-index: 100;
   right: 0rem;
-  /* display: none; */
   z-index: 1000;
 }
 .dropdown-profile li {
@@ -2630,13 +2850,13 @@ ul li h3 {
 .dropdown-search {
   position: absolute;
   font-size: 12px;
-  width: 400px;
+  width: max-content; 
   background: #dfdfdf;
   /* backdrop-filter: blur(20px); */
   border: 1px white solid;
   top: 2.8rem;
-  border-radius: 1rem;
-  padding: 0 1rem 1rem 1rem;
+  border-radius: .4rem;
+  padding: 0 .3rem .3rem .3rem;
   z-index: 100;
   left: 0;
   z-index: 1000;
@@ -2646,7 +2866,7 @@ ul li h3 {
   border-bottom: #ffffff2a 2px solid;
   margin-top: 0.5rem;
   width: 100%;
-  padding-left: 1rem;
+  /* padding-left: 1rem; */
   /* padding-top: 0.3rem;
     padding-bottom: 0.3rem; */
   transition: 0.25s;
@@ -2749,7 +2969,7 @@ ul li h3 {
 #logout {
   width: 60%;
   /* height: 10rem; */
-  border-radius: 2rem;
+  border-radius: .4rem;
   background-color: #fff;
   display: flex;
   flex-direction: column;
@@ -2863,7 +3083,8 @@ ul li h3 {
   margin: 0 1rem;
   padding: 0 1rem 2rem 1rem;
   background: #d8d8d850;
-  border-radius: 1rem;
+  border-radius: .4rem;
+  min-width: 25%;
 }
 
 .cost-section h3 {
@@ -2875,14 +3096,18 @@ ul li h3 {
   text-align: center;
 }
 .confirmation-text {
-  width: 100%;
+  width: max-content;
   background: #ffcb00;
   text-align: center;
   border-radius: 2rem;
+  margin: auto;
+
 }
-.confirmation-text h1 {
+.confirmation-text p {
   color: black;
   font-weight: 400;
+  padding: .4rem 1rem;
+  font-size: 1.4rem;
   white-space: nowrap;
 }
 
@@ -3031,6 +3256,4 @@ ul li h3 {
 /* ==================== Media Queries  =================== */
 
 /* ====================================================Booking Page Ends============================= */
-
-
 </style>

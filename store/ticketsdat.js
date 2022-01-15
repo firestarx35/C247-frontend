@@ -1,61 +1,60 @@
-import router from '../router/index'
-import { links } from '../asset'
+import { fetchData } from '../asset'
 
 const ticketsdat = {
     namespaced: true,
     
     state() {
-        return { tickets: null, ticketsbytime: null, earliest: null, ticketsbycost: null, cheapest: null, filterEarliest: true, filterCheapest: false, filterSameday: false, filterbest: false, filtergreenest: false, errorType: null}     //send cheapest, earliest and other special cards for behaviour. As we can assess whether customer has bboked that ticket or not
+        return { unsortedbytime: null, unsortedbycost: null, unsortedbyemission: null, 
+                    sortedbytime: null, sortedbycost: null, sortedbyemission: null,
+                    filterEarliest: true, filterCheapest: false, earliest: null, cheapest: null, 
+                    filtergreenest: false, errorType: null, 
+                } //send cheapest, earliest and other special cards for behaviour. As we can assess whether customer has bboked that ticket or not
     },
 
     mutations: {
         filterChange(state, payload) {
-            if (payload == 'earliest') { state.filterEarliest= true; state.filterCheapest= false; state.filterSameday= false; state.filterbest= false; state.filtergreenest= false }
-            else if (payload == 'cheapest') {state.filterEarliest= false; state.filterCheapest= true; state.filterSameday= false; state.filterbest= false; state.filtergreenest= false }
-            else if (payload == 'same-day') {state.filterEarliest= false; state.filterCheapest= false; state.filterSameday= true; state.filterbest= false; state.filtergreenest= false }
-            else if (payload == 'best') {state.filterEarliest= false; state.filterCheapest= false; state.filterSameday= false; state.filterbest= true; state.filtergreenest= false }
-            else if (payload == 'greenest') {state.filterEarliest= false; state.filterCheapest= false; state.filterSameday= false; state.filterbest= false; state.filtergreenest= true}
+            state.filterEarliest= false;
+            state.filterCheapest= false;
+            state.filtergreenest= false
+            if (payload == 'earliest') { state.filterEarliest= true }
+            else if (payload == 'cheapest') { state.filterCheapest= true }
+            else if (payload == 'greenest') { state.filtergreenest= true }
         },
         fetchTickets(state, payload) {
-            state.tickets = []
-            state.ticketsbytime = []
-            state.ticketsbycost = []
-            state.tickets = payload
+            state.unsortedbytime = []
+            state.unsortedbytime = payload
             state.earliest = payload[0][12]         
-            sortTickets(payload, state.ticketsbytime);
-            payload.sort(function(a, b){return a[2]-b[2]});  
-            state.cheapest = payload[0][12]             
-            sortTickets(payload, state.ticketsbycost);
+            sortTickets(payload, state.sortedbytime = [])
+            payload = payload.sort(function(a, b){ return a[2]-b[2] })
+            state.unsortedbycost = []
+            state.unsortedbycost = payload
+            state.cheapest = payload[0][12]
+            sortTickets(payload, state.sortedbycost = []);
         },
         clearTickets(state) {
-            state.tickets = null
-            state.ticketsbycost = null
-            state.ticketsbytime = null
+            state.unsortedbytime = null
+            state.unsortedbycost = null
+            state.sortedbytime = null
+            state.sortedbycost = null
             state.earliest = null
             state.cheapest = null
         },
-        errorReport(state, payload) {
-            state.errorType = payload
-        }
     },
 
     actions: {
         async fetchTickets(context) {
             context.commit('clearTickets')
             const topform = context.rootGetters['bookingdat/getTopform']
-            await fetch(links('flights') + new URLSearchParams({source: topform.source, destination: topform.destination, date: topform.date }), { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + context.rootState.userdat.token }}).then((response)=> {
-                if (response.ok) { return response.json() }
-                else if (response.status >= 400) { router.replace('/'); context.commit('userdat/unauthenticateUser', null, { root: true }) }
-                else { console.log("fetch failed")}     
-                }).then((dat)=> {
-                    if (dat.length == 0) { context.commit('errorReport', "No Flights Available!") }
-                    else {
-                        context.commit('fetchTickets', dat) 
-                    } 
-                }
-            );
+            const status = await fetchData({ url: 'flights', query: {source: topform.source, destination: topform.destination, date: topform.date }, body: { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + context.rootState.userdat.token }}})
+            if (status.status == 200) {
+                if (status.message.length == 0) {
+                    context.dispatch('userdat/displayError', { message: "No flights available", type: false }, { root: true })
+                } else {
+                    context.commit('clearTickets')
+                    context.commit('fetchTickets', status.message) 
+                }    
+            }
         },
-
         filterChange(context, payload) {
             context.commit('filterChange', payload);
         },
@@ -66,15 +65,25 @@ const ticketsdat = {
 
     getters: {
         getTicketstatus(state) {
-            if (state.ticketsbycost) { return true }
-            else { return false}
+            if (state.unsortedbytime) {
+                return true
+            } else {
+                return false
+            }
         },
-        getTickets(state) {
-            if (state.filterCheapest == true) {  return state.ticketsbycost }
-            else {return state.ticketsbytime }
+        getSorted(state) {
+            if (state.filterCheapest == true) {
+                return state.sortedbycost
+            } else{
+                return state.sortedbytime
+            }
         },
-        getUnsortedTickets(state) {
-            return state.tickets
+        getUnsorted(state) {
+            if (state.filterCheapest == true) {
+                return state.unsortedbycost
+            } else {
+                return state.unsortedbytime
+            }
         },
         getEarliest(state) {
             return state.earliest

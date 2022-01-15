@@ -3,23 +3,21 @@
 <section>
     <section id="saved-entries">
             <div v-if="savedTicketStatus">
-
                 <wallet-ticket v-for="savedTicket in savedTickets" :key="savedTicket" :savedTicket="savedTicket" @remove-wallet="removeWallet" @update-details="showwalletForm"> </wallet-ticket>
-                    
             </div>
-            <h1 v-else> Your Wallet is Empty! </h1>
+            <div class="empty-pallet" v-else>
+                <img :src="empty_pallet" alt="Empty Wallet">
+                <h1>Its empty here.</h1>
+            </div>
     </section>
     <div id="cargo-details-overlay" class="overlay" v-if="showForm"> 
+        <div class="cross-button closebtn" @click="closeForm"><img :src="cross_button" alt="close"></div>
         <div class="overlay-content">
-            <!-- =============================A div container for cargo details and cargo summary containers Starts============================ -->
-            <div v-click-outside="updateCargo">
-                <mid-form v-for="i in formcounter" :key="i" formname="Update" :formid="i" :formno="formcounter" @midform-button="updateCargo" @addmid-form="addmidForm"> </mid-form>
-                <summary-form v-if="!!midformData" :midformdata="midformSummary"></summary-form>
-            <!-- =============================A div container for cargo details and cargo summary containers Ends============================ -->
+            <div >
+                <midform-summary formname="Book" @midform-button="updateCargo"> </midform-summary>
             </div>
         </div>
     </div> 
-            <!-- ======================= Cargo details overlay Ends ======================================== -->
 </section>
 
 </template>
@@ -28,47 +26,67 @@
 import { ref, computed, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import WalletTicket from '../components/wallet/WalletTicket.vue'
-import MidForm from '../components/Form/MidForm.vue'
-import SummaryForm from '../components/Form/SummaryForm.vue'
+import MidformSummary from '../components/Form/MidformSummary.vue'
+import { imgs } from '../asset'
+import { useRouter } from 'vue-router'
 
 export default {
     components: {
         WalletTicket,
-        MidForm,
-        SummaryForm
+        MidformSummary,
     },
 
     setup() {
-        const store = useStore();
+        const store = useStore()
+        const router = useRouter()
+        const empty_pallet = imgs('empty_pallet_icon.svg')
+        const cross_button = imgs('cross_button.svg')
 
         const showForm = ref(false)
-        const formcounter = ref(1);
 
-        onBeforeMount(function () { if (!store.getters['userdat/getWalletStatus']) { store.dispatch('userdat/fetchWallet') }} )
+        onBeforeMount(function() { 
+            if (!!store.getters['userdat/getWallet']) {
+                store.dispatch('userdat/fetchWallet')
+            }
+        })
 
-        const savedTickets = computed(function() { return store.getters['userdat/getWallet'] } )
-        const savedTicketStatus = computed(function() { if (store.getters['userdat/getWalletStatus']) { if (store.getters['userdat/getWallet'].length > 0) { return true }
-                                                                                                      else { return false }}
-                                                        else { return false }})
-        const midformSummary = computed(function() { return store.getters['bookingdat/getformSummary'] })
+        const savedTickets = computed(function() { 
+            return store.getters['userdat/getWallet'] 
+        })
+        const savedTicketStatus = computed(function() { 
+            if (!!store.getters['userdat/getWallet']) {
+                if (store.getters['userdat/getWallet'].length > 0) { 
+                    return true
+                } else { 
+                    return false
+                }
+            } else {
+                return false
+            }
+        })
 
         function showwalletForm() {
             showForm.value = true
         }
 
-        function updateCargo() {
-            showForm.value = false
+        function closeForm() {
+            showForm.value = false    
         }
-        
-        function addmidForm() {
-            if (store.getters['bookingdat/getmidform'].length == formcounter.value) { formcounter.value += 1; }  ///checks if previous form has been filled
+
+        function updateCargo() {
+            if (store.getters['bookingdat/getMidForm']) {
+                closeForm()
+                router.push('/checkout/summary')
+            } else {
+                store.dispatch('userdat/displayError', { message: "Fill the form completely!", type: false })
+            }
         }
         
         function removeWallet(id) {
             store.dispatch('userdat/updateWallet', [id, false])
         }
 
-        return { savedTickets, savedTicketStatus, removeWallet, showwalletForm, showForm, formcounter, addmidForm, updateCargo, midformSummary }
+        return { empty_pallet, savedTickets, savedTicketStatus, removeWallet, showwalletForm, showForm, updateCargo, cross_button, closeForm}
         
     },
 }

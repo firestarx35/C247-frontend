@@ -1,7 +1,7 @@
 <template>
  <div class="saved-container">
     <div class="saved-card">
-        <div class="cross-button" @click="$emit('remove-wallet', ticket_data.flightno)"><span>&#10539;</span></div>
+        <div class="cross-button" @click="$emit('remove-wallet', ticket_data.flightno)"><img :src="cross_button" alt="close"></div>
         <p>Time left: {{time_left}} left to book</p>
         <div class="flight-num">
             <img :src="ticket_data.airline.logo" :alt="ticket_data.airline.name">
@@ -28,12 +28,11 @@
         </div>
         <div class="cost-details">
             <p>Current Rate   :  <span>{{ticket_data.rate}}</span></p>
-            <p>Total Weight    :   <span>{{ticket_data.cargodetails.weight}}</span></p>
+            <p>Chargeable Weight    :   <span>{{ticket_data.cargodetails.chargeable_weight}}</span></p>
             <p>Type  :  <span>{{ticket_data.cargodetails.type}}</span></p>
             <div id="expandable-button">
-                <button id="book-update" type="submit" @click="CheckoutData" v-if="!showUpdate">Book/Update</button>
-                <button id="now" class="btn" type="submit" @click="CheckoutNow" v-if="showBooknow">Book Now</button>
-                <button id="update" class="btn" type="submit" @click="UpdateDetails" v-if="showUpdate">Update and Book</button>
+                <button class="btn-3 btn" v-if="ticket_data.available" @click="CheckoutNow">Book Now</button>
+                <button class="btn-3 btn" @click="UpdateDetails">Update and Book</button>
             </div>
         </div>
     </div>
@@ -44,54 +43,46 @@
 <script>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
 import { imgs } from '../../asset'
 import { walletData } from '../../ticketData'
+import { useRouter } from 'vue-router'
 
 export default {
     emits: ['remove-wallet', 'update-details'],
     props: ['savedTicket'],
+    
     setup(props, { emit }) {
         const store = useStore();
         const router = useRouter();
 
         const aeroplane_logo = imgs('AEROPLANE-LOGO.png')
-        const showBooknow = ref(false)
-        const showUpdate = ref(false)
-        const showwalletForm = ref(false)
+        const cross_button = imgs('cross_button.svg')
         const time_left = ref('5 days') //Change this reactive stuff
 
-
-        const ticket_data = computed(function() { return walletData(props.savedTicket) })
-
-        function CheckoutData() {
-            showUpdate.value = true
-            if (props.savedTicket.length > 12) { 
-                showBooknow.value = true
-            }
-        }
+        const ticket_data = computed(function() { 
+            return walletData(props.savedTicket)
+        })
 
         function CheckoutNow() {
-            const midform =  { id: 1, length: props.savedTicket[14], width: props.savedTicket[15],
-                                height: props.savedTicket[16], weight: props.savedTicket[18],
-                                quantity: props.savedTicket[17], type: props.savedTicket[20],
-                                stacking: props.savedTicket[21], weighing: props.savedTicket[19],
-                                turnable: props.savedTicket[22], dimension: props.savedTicket[13]
-                                }
-                store.dispatch('bookingdat/addmidformData', midform )
-                store.dispatch('bookingdat/addCheckout', props.savedTicket[12]);
-                router.push('/search/checkout')
-
+            const midform =  { 
+                id: 1, length: props.savedTicket[14], width: props.savedTicket[15],
+                height: props.savedTicket[16], weight: props.savedTicket[18],
+                quantity: props.savedTicket[17], type: props.savedTicket[20],
+                stacking: props.savedTicket[21], weighing: props.savedTicket[19],
+                turnable: props.savedTicket[22], dimension: props.savedTicket[13]
+                }
+            store.dispatch('bookingdat/addmidformData', midform)
+            store.dispatch('bookingdat/addCheckout', props.savedTicket[12]);
+            router.push('/search/checkout')
         }
 
         function UpdateDetails() {
-                store.dispatch('bookingdat/clearMidForm')
-                store.dispatch('bookingdat/addCheckout', props.savedTicket[12])  
-                emit('update-details')
-            }
+            store.dispatch('bookingdat/clearMidForm')
+            store.dispatch('bookingdat/addCheckout', props.savedTicket[12])  
+            emit('update-details')
+        }
 
-        
-        return { aeroplane_logo, ticket_data, time_left, CheckoutData, CheckoutNow, UpdateDetails, showBooknow, showUpdate, showwalletForm }
+        return { aeroplane_logo, cross_button, ticket_data, time_left, CheckoutNow, UpdateDetails, props }
     },
 }
 </script>
