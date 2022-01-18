@@ -48,7 +48,7 @@
                         <h4>Volume</h4>
                     </div>
                     <div>
-                        <h4>Chargeable Weight</h4>
+                        <h4>Chargeable</h4>
                     </div>
                     <div>
                         <h4>Type</h4>
@@ -127,15 +127,18 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
+
 
 import { imgs, fetchData } from '../../asset'
 import { ExpansionData } from '../../ticketData'
+import { useRouter } from 'vue-router'
 
 export default {
     setup() {
         const store = useStore()
+        const router = useRouter()
         const AEROPLANE_LOGO = imgs('AEROPLANE-LOGO.png')
 
         const awbno = ref(null)
@@ -147,17 +150,18 @@ export default {
         })
 
         async function confirmBooking() {
-            if (awb.value.value.length == 11) {
-                    data = { awb: awbno.value.value, flight_id: data.value.flight_id, booking_metric: Summary.value.midform.dimension,
-                            booking_weight: Summary.value.midform.weight, booking_length: Summary.value.midform.length, booking_width: Summary.value.midform.width,
-                            booking_height: Summary.value.midform.height, booking_quantity: Summary.value.midform.quantity, booking_rate: data.value.amount.rate,
-                            booking_cost: data.value.amount.total, cargo_type: Summary.value.midform.type, stackable: Summary.value.midform.stacking, turnable: Summary.value.midform.turnable,
+            if (awbno.value.value.length == 11) {
+                    const booking_data = { awb: parseInt(awbno.value.value), flight_id: data.value.flightno, booking_metric: Summary.value[0].midform.dimension,
+                            booking_weight: parseFloat(Summary.value[0].midform.weight), booking_volume:parseFloat(Summary.value[0].TotalVolume), booking_chargeable: Summary.value[0].Chargeable, 
+                            booking_length: parseFloat(Summary.value[0].midform.length), booking_width: parseFloat(Summary.value[0].midform.width), booking_height: parseFloat(Summary.value[0].midform.height), 
+                            booking_quantity: parseInt(Summary.value[0].midform.quantity), booking_rate: 202, booking_cost: parseFloat(data.value.amount.total), 
+                            currency: 'INR', cargo_type: Summary.value[0].midform.type, stackable: Summary.value[0].midform.stacking, turnable: Summary.value[0].midform.turnable,
                         }
                     const status = await fetchData({ url: 'submit_transaction', query: null, body: { method: 'POST', mode: 'cors', headers: {'Content-Type': 'application/json', Authorization: "Bearer" + " " + store.getters['userdat/getToken'] },
-                                                                                                body: JSON.stringify(data) } })
+                                                                                                body: JSON.stringify(booking_data) } })
                     if ( status.status == 200 ) {
                         store.dispatch('userdat/updateTransactionId', status.message)
-                        router.push('checkout/confirmed')
+                        router.push('/checkout/confirmed')
                     } else {
                         store.dispatch('userdat/displayError', { message: "Booking Failed!", type: false })
                     }

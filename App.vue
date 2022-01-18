@@ -36,7 +36,6 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&display=swap');
 
 
-
 /* Added styles */
 .active-list {
     background: #fff;
@@ -2693,7 +2692,7 @@ form input {
   display: flex;
   justify-content: center;
   height: 3rem;
-  z-index: 1000000;
+  z-index: 1000;
 }
 
 #error-message p {
@@ -2711,7 +2710,7 @@ form input {
   display: flex;
   justify-content: center;
   height: 3rem;
-  z-index: 1000000;
+  z-index: 1000;
 }
 
 #positive-message p {

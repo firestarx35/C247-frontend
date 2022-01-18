@@ -40,9 +40,9 @@ function charges(ticket) {
     const chargeable_weight = store.getters['bookingdat/getWeight']
     if (chargeable_weight != null) { 
         const airline_cost = chargeable_weight*ticket
-        return { available: true, rate: currency() + ticket + ' kg', airline_cost: currency() + airline_cost, surcharge: currency() + (airline_cost*0.02).toFixed(2) + ' @ 2%', total: currency() + (airline_cost*1.02).toFixed(1) } ////To be replaced by airline data
+        return { available: true, rate: ticket, airline_cost: airline_cost, surcharge: (airline_cost*0.02).toFixed(2) + ' @ 2%', total: (airline_cost*1.02).toFixed(1) } ////To be replaced by airline data
     } else { 
-        return { available: false, rate: currency() + ticket + '/kg' } 
+        return { available: false, rate: ticket } 
     }
 }
 
@@ -180,4 +180,4 @@ function quoteData(ticket) {
             new Date(ticket[4]).toLocaleTimeString(), new Date(ticket[4]).toLocaleDateString(),
             ticket[5] ]
 }
-export { airportData, airlineData, sortedData, unsortedData, ExpansionData, walletData, transactionData, quoteData, customDate1 }
+export { airportData, airlineData, sortedData, unsortedData, ExpansionData, walletData, transactionData, quoteData, customDate1, customDate2 }

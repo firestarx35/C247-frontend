@@ -6,7 +6,7 @@ const userdat = {
     
     state() {
         return { isLoading: false, isAuthenticated: false, token: null, ProfileData: null, isprofileAvailable: false,
-                Transactions: null, Transaction_no: null, WalletTickets: null, errorData: { message: null, type: null, status: null }, 
+                Transactions: null, Transaction_no: null, WalletTickets: null, walletStatus: false, errorData: { message: null, type: null, status: null }, 
                 Userdata:{ interestedroutes: null, specialTickets: null}, DataSent: false }
             },
 
@@ -42,6 +42,7 @@ const userdat = {
         fetchWallet(state, payload) {
             state.WalletTickets = []
             state.WalletTickets = payload
+            state.walletStatus = true
         },
         fetchProfile(state, payload) {
             state.ProfileData = []
@@ -51,6 +52,10 @@ const userdat = {
         updateWallet(state, payload) {
             state.WalletTickets = []
             state.WalletTickets = payload
+            state.walletStatus = true
+        },
+        walletfetchStatus(state, payload) {
+            state.walletStatus = payload
         },
         updateProfile(state, payload) {
             state.ProfileData = []
@@ -79,35 +84,43 @@ const userdat = {
                 context.commit('authenticateUser', payload)
             } else { console.log("No token received") }
         }, 
+
         unauthenticateUser(context) {
             context.commit('unauthenticateUser', null)
         },
+
         addRoutes(context, payload) {
             context.commit('addRoutes', payload)
         },
+
         addSpecialTickets(context, payload) {
             context.commit('addSpecialTickets', payload)
         },
+
         async fetchWallet(context) {
             const status = await fetchData({ url: 'get_wallet', query: null, body: { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + context.state.token }}})
             if ( status.status == 200 ) {
                 context.commit('fetchWallet', status.message)
             }
         },
+
         async fetchTransactions(context) {
             const status = await fetchData({ url: 'get_transactions', query: null, body: { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + context.state.token }}})
             if ( status.status == 200 ) {
                 context.commit('fetchTransactions', status.message)
             }
         },
+
         async fetchProfile(context) {
             const status = await fetchData({ url: 'get_profile', query: null, body: { method: 'GET', mode: 'cors', headers: { Authorization: "Bearer" + " " + context.state.token }}})
             if ( status.status == 200 ) {
                 context.commit('fetchProfile', status.message)
             }
         },
+
         async updateWallet(context, payload) {
-            console.log(payload)
+            context.commit('walletfetchStatus', false)
+
             if (payload[1] == true ) {
                 let midform = context.rootState.bookingdat.midform
                 if (midform[midform.length -1]) {
@@ -122,12 +135,18 @@ const userdat = {
                                                                                                 body: JSON.stringify(data) } })
                     if ( status.status == 200 ) { 
                         context.commit('updateWallet', status.message)
+                        context.commit('displayError', { message: 'Successfully frozen', type: true, status: true })
+                        setTimeout(function() { 
+                            context.commit('displayError', { message: null, type: null, status: false })}, 2000)
                     }
                 } else {
                     const status = await fetchData({ url: 'update_wallet', query: null, body: { method: 'POST', mode: 'cors', headers: {'Content-Type': 'application/json', Authorization: "Bearer" + " " + context.state.token },
                                                                                                 body: JSON.stringify({ flight_id: payload[0], status: true }) } })
                     if ( status.status == 200 ) { 
                         context.commit('updateWallet', status.message)
+                        context.commit('displayError', { message: 'Successfully frozen', type: true, status: true })
+                        setTimeout(function() {
+                            context.commit('displayError', { message: null, type: null, status: false })}, 2000)
                     }
                 }
             } else {
@@ -138,6 +157,7 @@ const userdat = {
                 }
             }
         },
+
         async updateProfile(context, payload) {
             const status = await fetchData({ url: 'update_profile', query: null, body: { method: 'POST', mode: 'cors', headers: {'Content-Type': 'application/json', Authorization: "Bearer" + " " + context.state.token },
                                                                                                 body: JSON.stringify({ data: payload }) } })
@@ -146,9 +166,11 @@ const userdat = {
                 }
          
         },
+
         updateTransactionId(context, payload) {
             context.commit('updateTransactionId', payload)
         },
+
         async postUserData(context) {
             const status = await fetchData({ url: 'user_data', query: null, body: { method: 'POST', mode: 'cors', headers: {'Content-Type': 'application/json', Authorization: "Bearer" + " " + context.state.token },
                                                                                     body: JSON.stringify({ data: context.state.Userdata  }) } })
@@ -157,6 +179,7 @@ const userdat = {
                 context.commit('postUserData')
             }
         },
+
         displayError(context, payload) {
             context.commit('displayError', { message: payload.message, type: payload.type, status: true })
             setTimeout(function() { 
@@ -183,6 +206,9 @@ const userdat = {
             } else {
                 return false
             }
+        },
+        getWalletfetchStatus(state) {
+            return state.walletStatus
         },
         getProfileStatus(state) {                       ///use this for profile spinner
             return state.isprofileAvailable;

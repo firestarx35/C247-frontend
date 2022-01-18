@@ -46,7 +46,7 @@ export default {
 
     onBeforeMount(function() {
       if (!store.getters['bookingdat/getAirportstatus']) { store.dispatch('bookingdat/fetchAirports')}
-      if (!!store.getters['userdat/getWallet']) { store.dispatch('userdat/fetchWallet') }
+      if (!store.getters['userdat/getWallet']) { store.dispatch('userdat/fetchWallet') }
       if (!store.getters['userdat/getProfileStatus']) { store.dispatch('userdat/fetchProfile') }
       if (!!store.getters['userdat/getTransactions']) { store.dispatch('userdat/fetchTransactions') }
       if (!store.getters['bookingdat/getAirlinestatus']) { store.dispatch('bookingdat/fetchAirlines')}
@@ -76,9 +76,9 @@ export default {
     function updateCargo() {
       if (store.getters['bookingdat/getMidForm']) {
         closeForm()
-        router.push('/search/checkout')
+        router.push('/checkout/summary')
       } else {
-        store.dispatch('userdat/displayError', { message: "Fill the form completely!", type: false })
+        store.dispatch('userdat/displayError', { message: "Complete the form!", type: false })
       }
     }
 

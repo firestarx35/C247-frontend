@@ -50,9 +50,9 @@ export default {
         const ticketdata = computed(function() { return sortedData(props.ticket)})
         const charges = computed(function() {
             if (ticketdata.value.amount.available) {
-                return ticketdata.value.amount.total
+                return 'INR ' + ticketdata.value.amount.total
             } else {
-                return ticketdata.value.amount.rate
+                return 'INR ' + ticketdata.value.amount.rate + '/kg'
             }
         })
 

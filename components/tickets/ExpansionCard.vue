@@ -31,15 +31,16 @@
 <div class="p-btn">
     <div class="price-breakdown">
             <p v-if="ticketData.amount.available">Airline Cost</p>
-            <p v-if="ticketData.amount.available">{{ticketData.amount.airline_cost}}</p>
+            <p v-if="ticketData.amount.available">INR {{ticketData.amount.airline_cost}}</p>
             <p v-if="ticketData.amount.available">Fuel Surcharge</p>
-            <p v-if="ticketData.amount.available">{{ticketData.amount.surcharge}}</p>
+            <p v-if="ticketData.amount.available">INR {{ticketData.amount.surcharge}}</p>
             <p v-if="ticketData.amount.available">Total</p>
-            <p v-if="ticketData.amount.available">{{ticketData.amount.total}}</p>
+            <p v-if="ticketData.amount.available">INR {{ticketData.amount.total}}</p>
             <p v-if="!ticketData.amount.available">Airline Rate</p>
-            <p v-if="!ticketData.amount.available">{{ticketData.amount.rate}}</p>
+            <p v-if="!ticketData.amount.available">INR {{ticketData.amount.rate}} /kg</p>
     </div>
         <button class="btn-3 btn" @click="addtoWallet">Freeze</button>
+        <br>
         <button class="btn-3 btn" @click="CheckoutData">Book Now</button>
 </div>
 </template>
@@ -65,16 +66,14 @@ export default {
 
         function addtoWallet() {
             const existing_tickets = store.getters['userdat/getWallet']
-            if (!!existing_tickets) {
-                if (existing_tickets != undefined && existing_tickets.some(function(element) { return element[12] == props.ticket[12]})) {
+            if (!!existing_tickets && store.getters['userdat/getWalletfetchStatus']) {
+                if (existing_tickets.some(function(element) { return element[12] == props.ticket[12]})) {
                     store.dispatch('userdat/displayError', { message: "Ticket already exists!", type: false })
                 } else { 
                     store.dispatch('userdat/updateWallet', [props.ticket[12], true])
-                    store.dispatch('userdat/displayError', { message: "Ticket successfully frozen!", type: true })
                 }
-            } else {
+            } else if (store.getters['userdat/getWalletfetchStatus']) {
                 store.dispatch('userdat/updateWallet', [props.ticket[12], true])
-                store.dispatch('userdat/displayError', { message: "Ticket successfully frozen!", type: true })
             }
         }
         function CheckoutData() {

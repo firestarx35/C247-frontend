@@ -9,7 +9,7 @@ const bookingdat = {
     mutations: {
         fetchAirports(state, payload) {
             state.Airports = payload; 
-            state.isairportAvialable = true;
+            state.isairportAvialable = true
         },
         fetchAirlines(state, payload) {
             state.Airlines = payload
@@ -103,7 +103,7 @@ const bookingdat = {
             const data = { 
                 midform: payload, TotalVolume: volume.toFixed(2), TotalWeight: weight,
                 Density: density, Chargeable: chargeable_weight, unit_system: unit_system, 
-                volume_unit: volume_unit, density_unit: density_unit
+                volume_unit: volume_unit, density_unit: density_unit, currency: 'INR'
             }
             context.commit('addCargoSummary', data)
         },

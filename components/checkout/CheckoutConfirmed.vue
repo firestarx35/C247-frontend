@@ -43,7 +43,7 @@
                         <h4>Weight(kg)</h4>
                     </div>
                     <div>
-                        <h4>Volume({{data[11]}})</h4>
+                        <h4>Volume</h4>
                     </div>
                     <div>
                         <h4>Chargeable(kg)</h4>
@@ -66,7 +66,7 @@
                         <h4>{{data[18]}}</h4>
                     </div>
                     <div>
-                        <h4>{{data[12]}}}</h4>
+                        <h4>{{data[12]}}</h4>
                     </div>
                     <div>
                         <h4>{{data[13]}}</h4>
@@ -94,7 +94,7 @@
                 <h2>Booking Details</h2>
 
                 <form class="booking-form" action="">
-                    <label for="awb">AWB Number</label>
+                    <label for="awb">AWB</label>
                     <h5>{{data[2]}}</h5>
                 </form>
 
@@ -122,8 +122,8 @@
                 </div>
                 
                 <div class="page-save-icon">
-                    <img :src="save_16" alt="Save">
-                    <img :src="printer_11" alt="Print">
+                    <img :src="save_16" alt="Save" @click="saveQuote">
+                    <img :src="printer_11" alt="Print" @click="printQuote">
                 </div>
 
             </div>
@@ -133,9 +133,9 @@
 </template>
 
 <script>
-import { onBeforeMount } from '@vue/runtime-core'
+import { onBeforeMount, ref, computed } from '@vue/runtime-core'
 import { useStore } from 'vuex'
-import { imgs } from '../../asset'
+import { imgs, fetchData } from '../../asset'
 import { airlineData, customDate1, airportData } from '../../ticketData'
 export default {
     setup() {
@@ -143,7 +143,6 @@ export default {
         const AEROPLANE_LOGO = imgs('AEROPLANE-LOGO.png')
         const save_16 = imgs('save_16.png')
         const printer_11 = imgs('printer_11.png')
-
 
         const dataAvailable = ref(false)
         const data = ref(null)
@@ -154,6 +153,7 @@ export default {
             if (status.status == 200) {
                 data.value = status.message
                 dataAvailable.value = true
+                store.dispatch('userdat/fetchTransactions')
             } else {
                 store.dispatch('userdat/displayError', { message: "Failed to fetch Data!", type: false })
             }
@@ -168,13 +168,17 @@ export default {
                     }
         })
 
+        function saveQuote() {
+            window.print()
+        }
 
-        return { AEROPLANE_LOGO, save_16, printer_11, dataAvailable, data, airline , route}
+        function printQuote() {
+            window.print()
+        }
+
+
+        return { AEROPLANE_LOGO, save_16, printer_11, dataAvailable, data, airline, route, saveQuote, printQuote}
     }
 
 }
 </script>
-
-<style>
-
-</style>

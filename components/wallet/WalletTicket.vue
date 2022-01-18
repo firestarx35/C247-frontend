@@ -27,8 +27,8 @@
                 </div>
         </div>
         <div class="cost-details">
-            <p>Current Rate   :  <span>{{ticket_data.rate}}</span></p>
-            <p>Chargeable Weight    :   <span>{{ticket_data.cargodetails.chargeable_weight}}</span></p>
+            <p>Current Rate   :  <span> {{ticket_data.rate}}</span></p>
+            <p>Chargeable Weight(kg)   :   <span>{{ticket_data.cargodetails.chargeable_weight}}</span></p>
             <p>Type  :  <span>{{ticket_data.cargodetails.type}}</span></p>
             <div id="expandable-button">
                 <button class="btn-3 btn" v-if="ticket_data.available" @click="CheckoutNow">Book Now</button>
@@ -57,7 +57,12 @@ export default {
 
         const aeroplane_logo = imgs('AEROPLANE-LOGO.png')
         const cross_button = imgs('cross_button.svg')
-        const time_left = ref('5 days') //Change this reactive stuff
+        const time_left = computed(function() {
+            var now = new Date()
+            const diff = props.savedTicket[4] - now
+            console.log(props.savedTicket[4], now, diff)
+            return diff
+        })
 
         const ticket_data = computed(function() { 
             return walletData(props.savedTicket)
@@ -73,7 +78,7 @@ export default {
                 }
             store.dispatch('bookingdat/addmidformData', midform)
             store.dispatch('bookingdat/addCheckout', props.savedTicket[12]);
-            router.push('/search/checkout')
+            router.push('/checkout/summary')
         }
 
         function UpdateDetails() {

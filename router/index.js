@@ -15,7 +15,9 @@ import Wallet from '../views/Wallet.vue'
 import Requests from '../views/Requests.vue'
 
 
-const isAuthenticated = computed(function() { return store.getters['userdat/getAuthStatus'] })
+const isAuthenticated = computed(function() { 
+  return store.getters['userdat/getAuthStatus']
+})
 
 const routes = [
   { path: '/', name: 'Login', component: Login },
@@ -25,8 +27,8 @@ const routes = [
   { path: '/profile', name: 'Profile', component: Profile },
   { path: '/wallet', name: 'Wallet', component: Wallet },
   { path: '/requests', name: 'Requests', component: Requests },
-  { path: '/checkout', name: 'Checkout', component: Checkout, children: [ { path: '/summary', name: 'CheckoutSummary', component: CheckoutSummary },
-                                                                          { path: '/confirmed', name: 'CheckoutConfirmed', component: CheckoutConfirmed } 
+  { path: '/checkout', name: 'Checkout', component: Checkout, children: [ { path: '/checkout/summary', name: 'CheckoutSummary', component: CheckoutSummary },
+                                                                          { path: '/checkout/confirmed', name: 'CheckoutConfirmed', component: CheckoutConfirmed } 
                                                                         ] },
   { path: '/logout', name: 'Logout', component: Logout }
 ]
